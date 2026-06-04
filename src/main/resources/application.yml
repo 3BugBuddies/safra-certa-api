@@ -8,17 +8,18 @@ spring:
     driver-class-name: oracle.jdbc.OracleDriver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create   # recria o schema a cada boot (facilita testes — trocar p/ update/validate depois)
     database-platform: org.hibernate.dialect.OracleDialect
     show-sql: false
-  ai:
-    google:
-      genai:
-        api-key: ${GEMINI_API_KEY:}
-        chat:
-          options:
-            model: gemini-2.0-flash
-            temperature: 0.2
+  # Spring AI — DESABILITADO temporariamente (ver pom.xml). Reativar no PRD 04 com o upgrade de stack.
+  # ai:
+  #   google:
+  #     genai:
+  #       api-key: ${GEMINI_API_KEY:}
+  #       chat:
+  #         options:
+  #           model: gemini-2.0-flash
+  #           temperature: 0.2
 
 springdoc:
   swagger-ui:

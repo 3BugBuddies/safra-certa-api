@@ -66,11 +66,17 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Spring AI — Gemini via Google AI Studio -->
+        <!-- Spring AI — Gemini (Google GenAI). DESABILITADO temporariamente.
+             O artefato correto é `spring-ai-starter-model-google-genai`, que existe só
+             a partir do Spring AI 1.1.x (mira Spring Boot 3.4+/3.5+; projeto está em 3.3.5).
+             Reativar no PRD 04 (Motor de Risco/IA) junto com o upgrade de stack —
+             a IA ainda não tem código que a use. -->
+        <!--
         <dependency>
             <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-google-genai-spring-boot-starter</artifactId>
+            <artifactId>spring-ai-starter-model-google-genai</artifactId>
         </dependency>
+        -->
 
         <!-- OpenAPI / Swagger -->
         <dependency>

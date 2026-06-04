@@ -59,7 +59,7 @@ docker compose logs -f oracle-xe
 
 ### Contexto dos recursos testados
 
-O núcleo do sistema é o **Motor de Risco**: a cada leitura de sensor recebida, o motor busca a safra ativa do talhão, compara os valores medidos com os limiares da cultura plantada e calcula o `NivelRisco` (`NORMAL`, `BAIXO`, `MEDIO` ou `ALTO`). Em seguida, chama o Gemini para gerar `diagnostico` e `recomendacao` em texto livre. O resultado é gravado em `SaudeTalhao`. Se o nível for diferente de `NORMAL`, um `Alerta` é criado como marcador.
+O núcleo do sistema é o **Motor de Risco**: a cada leitura de sensor recebida, o motor busca a safra ativa do talhão, compara os valores medidos com os limiares da cultura plantada e calcula o `NivelRisco` (`NORMAL`, `BAIXO`, `MEDIO` ou `ALTO`). Em seguida, chama o Gemini para gerar `diagnostico` e `recomendacao` em texto livre. O resultado é gravado em `AnaliseTalhao`. Se o nível for diferente de `NORMAL`, um `Alerta` é criado como marcador.
 
 Para que o motor funcione, é preciso antes montar a hierarquia de dados: cooperativa → produtor → talhão → cultura → safra. Depois, enviar uma leitura do sensor já dispara todo o fluxo.
 
@@ -104,8 +104,8 @@ api-java/
 │   ├── config/        # OpenApiConfig, CorsConfig, SchedulingConfig
 │   ├── controller/    # Um controller por recurso
 │   ├── dto/           # Records XxxRequest / XxxResponse
-│   ├── entity/        # 10 entidades JPA + 3 embeddables
-│   │   └── enums/     # NivelAlerta, StatusSafra
+│   ├── entity/        # 11 entidades + RegistroClimatico (abstrata) + 3 embeddables
+│   │   └── enums/     # NivelRisco, StatusSafra
 │   ├── repository/    # Um JpaRepository por raiz de agregado
 │   └── service/       # CRUD services + MotorDeRiscoService + IaService
 ├── src/main/resources/
@@ -119,34 +119,38 @@ api-java/
 
 ## Modelo de Dados
 
-### Entidades — 10 tabelas
+### Entidades — 11 tabelas + 1 superclasse abstrata
 
 | Entidade | Tabela | Relacionamentos |
 |---|---|---|
-| `Cooperativa` | `COOPERATIVA` | 1:N → Produtor |
+| `Cooperativa` | `COOPERATIVA` | 1:N → Produtor; `endereco` |
 | `Produtor` | `PRODUTOR` | N:1 → Cooperativa; 1:N → Talhao |
 | `Cultura` | `CULTURA` | catálogo; 1:N → SafraTalhao |
-| `Talhao` | `TALHAO` | N:1 → Produtor; `[Coordenada]`; 1:N → TalhaoPonto |
-| `TalhaoPonto` | `TALHAO_PONTO` | `@EmbeddedId (talhaoId + ordem)`; `[Coordenada]` |
-| `SafraTalhao` | `SAFRA_TALHAO` | N:1 → Talhao; N:1 → Cultura; 1:N → SaudeTalhao |
-| `Leitura` | `LEITURA` | N:1 → Talhao; `[Medicao]` |
-| `PrevisaoClimatica` | `PREVISAO_CLIMATICA` | N:1 → Talhao; `[Previsao]` |
-| `SaudeTalhao` | `SAUDE_TALHAO` | N:1 → SafraTalhao; snapshot `[Medicao]` + `[Previsao]` |
-| `Alerta` | `ALERTA` | 1:1 → SaudeTalhao (unique); criado só quando `NivelRisco ≠ NORMAL` |
+| `Dispositivo` | `DISPOSITIVO` | N:1 → Talhao; `codigoDispositivo` unique; `ativo` |
+| `Talhao` | `TALHAO` | N:1 → Produtor; `[Coordenada centro]`; 1:N → TalhaoPonto; 1:N → Dispositivo |
+| `TalhaoPonto` | `TALHAO_PONTO` | N:1 → Talhao; `ordem`; unique `(talhao_id, ordem)`; `[Coordenada]` |
+| `SafraTalhao` | `SAFRA_TALHAO` | N:1 → Talhao; N:1 → Cultura; 1:N → AnaliseTalhao |
+| `RegistroClimatico` | — (abstrata) | base `TABLE_PER_CLASS` (sem tabela); N:1 → Talhao; `dataHora` + grandezas |
+| `LeituraSensor` | `LEITURA_SENSOR` | herda `RegistroClimatico`; N:1 → Dispositivo |
+| `PrevisaoClimatica` | `PREVISAO_CLIMATICA` | herda `RegistroClimatico`; + `dataHoraPrevista`, `chuva` |
+| `AnaliseTalhao` | `ANALISE_TALHAO` | N:1 → SafraTalhao; snapshot `[Medicao]` + `[Previsao]` |
+| `Alerta` | `ALERTA` | 1:1 → AnaliseTalhao (unique); criado só quando `NivelRisco ≠ NORMAL` |
 
-### Embeddables — 3 classes `@Embeddable`
+### Embeddables — 3 classes `@Embeddable` (servem só `AnaliseTalhao`)
 
 | Embeddable | Campos | Usado em |
 |---|---|---|
 | `Coordenada` | `latitude`, `longitude` | `Talhao`, `TalhaoPonto` |
-| `Medicao` | `temperatura`, `umidadeAr`, `radiacaoSolar`, `umidadeSolo?` | `Leitura`, `SaudeTalhao` |
-| `Previsao` | `chuva`, `temperatura`, `radiacaoSolar`, `umidadeSolo` | `PrevisaoClimatica`, `SaudeTalhao` (`@AttributeOverrides`) |
+| `Medicao` | `temperatura`, `umidadeAr`, `radiacaoSolar`, `umidadeSolo?` | `AnaliseTalhao` (snapshot) |
+| `Previsao` | `chuva`, `umidadeAr`, `temperatura`, `radiacaoSolar`, `umidadeSolo` | `AnaliseTalhao` (snapshot, `@AttributeOverrides`) |
+
+> A herança climática (`RegistroClimatico` → `LeituraSensor`/`PrevisaoClimatica`) usa `TABLE_PER_CLASS`: cada subclasse tem sua tabela completa, sem tabela base. Detalhe na **ADR 01**.
 
 ### Enums
 
 | Enum | Valores |
 |---|---|
-| `NivelAlerta` | `NORMAL`, `BAIXO`, `MEDIO`, `ALTO` |
+| `NivelRisco` | `NORMAL`, `BAIXO`, `MEDIO`, `ALTO` |
 | `StatusSafra` | `ATIVA`, `COLHIDA`, `PERDIDA` |
 
 ---
@@ -157,20 +161,20 @@ api-java/
 POST /leituras  (ESP32)
       │
       ▼
-LeituraService ──salva Leitura──────────────────────────────┐
+LeituraSensorService ─salva LeituraSensor────────────────────┐
       │                                                      │
       ▼                                                      │
-MotorDeRiscoService                                         LEITURA
+MotorDeRiscoService                                    LEITURA_SENSOR
       │
       ├── busca SafraTalhao ativa do talhão
-      ├── busca última Leitura          ─── dados atuais
+      ├── busca última LeituraSensor     ─── dados atuais
       ├── busca última PrevisaoClimatica ── dados previstos
       │
       ▼
 RiscoCalculator (determinístico)
       │   compara Medicao + Previsao com limiares da Cultura
       ▼
-NivelAlerta (NORMAL | BAIXO | MEDIO | ALTO)
+NivelRisco (NORMAL | BAIXO | MEDIO | ALTO)
       │
       ▼
 IaService ──── monta prompt ──── Gemini 2.0 Flash
@@ -180,21 +184,21 @@ IaService ──── monta prompt ──── Gemini 2.0 Flash
       └───────────────────────────────┘
                     │
                     ▼
-             SaudeTalhao  (snapshot: Medicao + Previsao + NivelAlerta + IA)
+             AnaliseTalhao  (snapshot: Medicao + Previsao + NivelRisco + IA)
                     │
-          NivelAlerta != NORMAL?
+          NivelRisco != NORMAL?
                     │
                     ▼
-                 Alerta  (marcador 1:1 com SaudeTalhao)
+                 Alerta  (marcador 1:1 com AnaliseTalhao)
 ```
 
 **Separação de responsabilidades:** o cálculo determinístico decide o nível (auditável, sem IA). O Gemini só descreve — não inventa números nem decide o alerta.
 
 ---
 
-## Por que `SaudeTalhao` é snapshot e não FK para leituras?
+## Por que `AnaliseTalhao` é snapshot e não FK para leituras?
 
-Guardar FKs para `Leitura` e `PrevisaoClimatica` criaria acoplamento temporal: se uma leitura fosse deletada, o histórico de saúde ficaria incompleto. O snapshot copia os valores no momento da análise — o histórico de `SaudeTalhao` é autossuficiente e não depende de leituras antigas continuarem existindo.
+Guardar FKs para `LeituraSensor` e `PrevisaoClimatica` criaria acoplamento temporal: se uma leitura fosse deletada, o histórico de saúde ficaria incompleto. O snapshot copia os valores no momento da análise — o histórico de `AnaliseTalhao` é autossuficiente e não depende de leituras antigas continuarem existindo.
 
 ---
 
