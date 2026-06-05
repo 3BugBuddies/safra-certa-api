@@ -2,9 +2,9 @@ spring:
   application:
     name: safracerta-api
   datasource:
-    url: ${ORACLE_URL:jdbc:oracle:thin:@localhost:1521/XEPDB1}
-    username: ${ORACLE_USER:safra}
-    password: ${ORACLE_PASSWORD:safra123}
+    url: ${ORACLE_URL:jdbc:oracle:thin:@oracle.fiap.com.br:1521/ORCL}
+    username: ${ORACLE_USER:rm563925}
+    password: ${ORACLE_PASSWORD:070602}
     driver-class-name: oracle.jdbc.OracleDriver
   jpa:
     hibernate:
@@ -20,6 +20,11 @@ spring:
   #         options:
   #           model: gemini-2.0-flash
   #           temperature: 0.2
+
+safracerta:
+  open-meteo:
+    base-url: https://api.open-meteo.com/v1/forecast
+    throttle-horas: 1   # só consulta nova previsão se a última for mais antiga que isto (horas)
 
 springdoc:
   swagger-ui:

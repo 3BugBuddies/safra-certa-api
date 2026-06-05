@@ -18,7 +18,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping("/talhoes")
+@RequestMapping("/talhao")
 @Tag(name = "Talhões", description = "Cadastro de talhões e polígono")
 public class TalhaoController {
 

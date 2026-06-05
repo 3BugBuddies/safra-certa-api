@@ -18,7 +18,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping("/safras")
+@RequestMapping("/safra")
 @Tag(name = "Safras", description = "Safras por talhão (talhão + cultura + ciclo)")
 public class SafraTalhaoController {
 

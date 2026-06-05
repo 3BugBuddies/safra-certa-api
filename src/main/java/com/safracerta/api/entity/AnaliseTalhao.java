@@ -31,11 +31,13 @@ public class AnaliseTalhao {
 
     @Embedded
     @AttributeOverrides({
-        @AttributeOverride(name = "chuva",         column = @Column(name = "prev_chuva")),
-        @AttributeOverride(name = "temperatura",   column = @Column(name = "prev_temperatura")),
-        @AttributeOverride(name = "umidadeAr",     column = @Column(name = "prev_umidade_ar")),
-        @AttributeOverride(name = "radiacaoSolar", column = @Column(name = "prev_radiacao_solar")),
-        @AttributeOverride(name = "umidadeSolo",   column = @Column(name = "prev_umidade_solo"))
+        @AttributeOverride(name = "chuva",          column = @Column(name = "prev_chuva")),
+        @AttributeOverride(name = "temperatura",    column = @Column(name = "prev_temperatura")),
+        @AttributeOverride(name = "temperaturaMin", column = @Column(name = "prev_temperatura_min")),
+        @AttributeOverride(name = "temperaturaMax", column = @Column(name = "prev_temperatura_max")),
+        @AttributeOverride(name = "umidadeAr",      column = @Column(name = "prev_umidade_ar")),
+        @AttributeOverride(name = "radiacaoSolar",  column = @Column(name = "prev_radiacao_solar")),
+        @AttributeOverride(name = "umidadeSolo",    column = @Column(name = "prev_umidade_solo"))
     })
     private Previsao previsaoPrevista;
 

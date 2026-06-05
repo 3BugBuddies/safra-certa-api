@@ -22,9 +22,14 @@ public class Cooperativa {
     @Column(nullable = false, unique = true, length = 18)
     private String cnpj;
 
-    private String cidade;
-    private String endereco;
-    private String estado;
     private String telefone;
     private String email;
+
+    // Endereço (campos planos)
+    private String logradouro;
+    private String numero;
+    private String bairro;
+    private String cidade;
+    private String cep;
+    private String uf;
 }

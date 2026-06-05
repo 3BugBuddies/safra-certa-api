@@ -21,4 +21,8 @@ public class PrevisaoClimatica extends RegistroClimatico {
     private LocalDateTime dataHoraPrevista;
 
     private Double chuva;
+
+    /** Temperatura herdada = média do dia. Min/Max do D+1 para risco térmico (geada × calor). */
+    private Double temperaturaMin;
+    private Double temperaturaMax;
 }

@@ -25,8 +25,6 @@ public class Produtor {
     @Column(nullable = false)
     private String nome;
 
-    private String cidade;
-    private String endereco;
     private String telefone;
 
     @Column(nullable = false, unique = true, length = 14)
@@ -35,4 +33,12 @@ public class Produtor {
     private LocalDate dataNascimento;
     private String nomePropriedade;
     private String caf;
+
+    // Endereço (campos planos)
+    private String logradouro;
+    private String numero;
+    private String bairro;
+    private String cidade;
+    private String cep;
+    private String uf;
 }

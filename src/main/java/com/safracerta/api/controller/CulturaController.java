@@ -18,7 +18,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping("/culturas")
+@RequestMapping("/cultura")
 @Tag(name = "Culturas", description = "Catálogo de culturas e seus thresholds")
 public class CulturaController {
 

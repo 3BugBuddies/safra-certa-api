@@ -18,7 +18,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping("/cooperativas")
+@RequestMapping("/cooperativa")
 @Tag(name = "Cooperativas", description = "Cadastro de cooperativas")
 public class CooperativaController {
 

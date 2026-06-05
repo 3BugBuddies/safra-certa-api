@@ -15,6 +15,8 @@ public class Previsao {
     private Double chuva;
     private Double umidadeAr;
     private Double temperatura;
+    private Double temperaturaMin;
+    private Double temperaturaMax;
     private Double radiacaoSolar;
     private Double umidadeSolo;
 }

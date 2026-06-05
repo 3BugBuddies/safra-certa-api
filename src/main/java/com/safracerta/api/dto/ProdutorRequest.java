@@ -11,13 +11,17 @@ import java.time.LocalDate;
 public record ProdutorRequest(
         @NotNull Long cooperativaId,
         @NotBlank String nome,
-        String cidade,
-        String endereco,
         String telefone,
         @NotBlank @Size(min = 11, max = 14) String cpf,
         LocalDate dataNascimento,
         String nomePropriedade,
-        String caf
+        String caf,
+        String logradouro,
+        String numero,
+        String bairro,
+        String cidade,
+        String cep,
+        String uf
 ) {
     public Produtor toEntity(Cooperativa cooperativa) {
         Produtor p = new Produtor();
@@ -28,12 +32,16 @@ public record ProdutorRequest(
     public void applyTo(Produtor p, Cooperativa cooperativa) {
         p.setCooperativa(cooperativa);
         p.setNome(nome);
-        p.setCidade(cidade);
-        p.setEndereco(endereco);
         p.setTelefone(telefone);
         p.setCpf(cpf);
         p.setDataNascimento(dataNascimento);
         p.setNomePropriedade(nomePropriedade);
         p.setCaf(caf);
+        p.setLogradouro(logradouro);
+        p.setNumero(numero);
+        p.setBairro(bairro);
+        p.setCidade(cidade);
+        p.setCep(cep);
+        p.setUf(uf);
     }
 }
