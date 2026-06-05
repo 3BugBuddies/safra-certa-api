@@ -27,7 +27,7 @@ O serviço recebe leituras de sensores ESP32 e dados climáticos do Open-Meteo, 
 | Spring Data JPA | SQL | 10 entidades JPA (domínio agrícola) |
 | Oracle Driver | SQL | Oracle XE 21 via Docker |
 | Spring HATEOAS | WEB | Hypermedia nos responses |
-| Spring AI Google GenAI | AI | Gemini 2.0 Flash — diagnóstico e recomendação |
+| Spring AI Google GenAI | AI | Gemini 2.0 Flash — diagnóstico/recomendação · **desabilitado até o PRD 04** (upgrade de stack) |
 | Bean Validation | I/O | Validação de DTOs de entrada |
 | Spring Boot DevTools | Dev | Reload automático em desenvolvimento |
 | Springdoc OpenAPI | Dev | Swagger UI com todos os endpoints |
@@ -53,46 +53,84 @@ docker compose logs -f oracle-xe
 
 ---
 
-## Avaliação Java — roteiro de endpoints
+## Endpoints da API (estado atual)
 
-> Estes endpoints são **autocontidos**: não dependem de ESP32 físico nem de chave Gemini ativa. O avaliador precisa apenas dos containers rodando.
+> **Implementado:** CRUD de cooperativa, produtor, cultura, talhão (+polígono), safra e dispositivo · ingestão de leitura do ESP32 · coleta de previsão via Open-Meteo (no fluxo do POST de leitura, com throttle).
+> **Próxima fase (PRD 04):** Motor de Risco + IA (Gemini) e os recursos `AnaliseTalhao` / `Alerta` — ainda **não** expostos.
+> **Rotas no singular.** Base local: `http://localhost:8080` · Swagger: `/swagger-ui.html` (lista todos os endpoints e schemas).
 
-### Contexto dos recursos testados
+### Recursos e rotas
 
-O núcleo do sistema é o **Motor de Risco**: a cada leitura de sensor recebida, o motor busca a safra ativa do talhão, compara os valores medidos com os limiares da cultura plantada e calcula o `NivelRisco` (`NORMAL`, `BAIXO`, `MEDIO` ou `ALTO`). Em seguida, chama o Gemini para gerar `diagnostico` e `recomendacao` em texto livre. O resultado é gravado em `AnaliseTalhao`. Se o nível for diferente de `NORMAL`, um `Alerta` é criado como marcador.
-
-Para que o motor funcione, é preciso antes montar a hierarquia de dados: cooperativa → produtor → talhão → cultura → safra. Depois, enviar uma leitura do sensor já dispara todo o fluxo.
-
-### Fluxo sugerido — caminho feliz completo
-
-| Ordem | Descrição | Método | Rota | Retorno esperado |
-|---|---|---|---|---|
-| 1 | Cadastra a cooperativa | `POST` | `/cooperativas` | `201` com a cooperativa criada |
-| 2 | Lista cooperativas cadastradas | `GET` | `/cooperativas` | `200` com lista |
-| 3 | Cadastra um produtor vinculado | `POST` | `/produtores` | `201` com o produtor |
-| 4 | Cadastra uma cultura no catálogo | `POST` | `/culturas` | `201` com limiares definidos |
-| 5 | Lista culturas disponíveis | `GET` | `/culturas` | `200` com catálogo |
-| 6 | Cadastra um talhão do produtor | `POST` | `/talhoes` | `201` com o talhão |
-| 7 | Abre uma safra (talhão + cultura) | `POST` | `/safras` | `201` com a safra ativa |
-| 8 | Consulta a safra criada | `GET` | `/safras/{id}` | `200` com status `ATIVA` |
-| 9 | Envia leitura do sensor ESP32 | `POST` | `/leituras` | `201` → dispara Motor de Risco |
-| 10 | Consulta a saúde gerada | `GET` | `/saude-talhao` | `200` com `nivelRisco`, `diagnostico`, `recomendacao` |
-| 11 | Verifica se alerta foi criado | `GET` | `/alertas` | `200` — presente se nível ≠ `NORMAL` |
-| 12 | Envia previsão climática | `POST` | `/previsoes` | `201` com a previsão registrada |
-| 13 | Atualiza dados da cooperativa | `PUT` | `/cooperativas/{id}` | `200` com dados atualizados |
-| 14 | Atualiza dados do produtor | `PUT` | `/produtores/{id}` | `200` com dados atualizados |
-| 15 | Encerra a safra | `PUT` | `/safras/{id}` com `statusSafra: COLHIDA` | `200` com status atualizado |
-| 16 | Remove talhão de teste | `DELETE` | `/talhoes/{id}` | `204` sem corpo |
-
-### Validações e respostas de erro
-
-| Situação | Método | Rota | Retorno esperado |
+| Recurso | Métodos | Rota base | Observações |
 |---|---|---|---|
-| Cria cooperativa sem CNPJ | `POST` | `/cooperativas` com `{}` | `400` com `ErrorResponse` |
-| Busca produtor inexistente | `GET` | `/produtores/999999` | `404` com `ErrorResponse` |
-| Envia leitura sem `talhaoId` | `POST` | `/leituras` com `{}` | `400` com `ErrorResponse` |
-| Cria safra com cultura inexistente | `POST` | `/safras` com `culturaId` inválido | `404` com `ErrorResponse` |
-| CNPJ duplicado na cooperativa | `POST` | `/cooperativas` com CNPJ já cadastrado | `409` com `ErrorResponse` |
+| Cooperativa | `GET` `POST` `PUT` `DELETE` | `/cooperativa` `/cooperativa/{id}` | HATEOAS; `cnpj` único; delete bloqueado com produtores |
+| Produtor | `GET` `POST` `PUT` `DELETE` | `/produtor` `/produtor/{id}` | filtro `?cooperativaId=`; `cpf` único |
+| Cultura | `GET` `POST` `PUT` `DELETE` | `/cultura` `/cultura/{id}` | catálogo + limiares; `nome` único |
+| Talhão | `GET` `POST` `PUT` `DELETE` | `/talhao` `/talhao/{id}` | filtro `?produtorId=`; `centro` + `pontos` (polígono) |
+| Safra | `GET` `POST` `PUT` `DELETE` | `/safra` `/safra/{id}` | filtro `?talhaoId=`; `statusSafra` |
+| Dispositivo | `GET` `POST` `PUT` `DELETE` | `/dispositivo` `/dispositivo/{id}` | 1 por talhão; delete bloqueado com safra ATIVA |
+| Leitura | `GET` `POST` | `/leitura?talhaoId={id}` `/leitura` | ingestão ESP32 (DTO simples) |
+| Previsão | `GET` | `/previsao?talhaoId={id}` | histórico coletado da Open-Meteo |
+
+### Exemplos de payload (POST)
+
+**`POST /cooperativa`** (endereço em campos planos)
+```json
+{ "nome": "Cooperativa Sorriso", "cnpj": "12345678000199", "telefone": "6699990000",
+  "email": "contato@coop.com", "logradouro": "Av. Brasil", "numero": "1000",
+  "bairro": "Centro", "cidade": "Sorriso", "cep": "78890000", "uf": "MT" }
+```
+
+**`POST /produtor`** (`cooperativaId` obrigatório; mesmos campos de endereço)
+```json
+{ "cooperativaId": 1, "nome": "João da Silva", "telefone": "6698887777", "cpf": "12345678901",
+  "nomePropriedade": "Fazenda Boa Vista", "caf": "CAF-001", "logradouro": "Rod. MT-242, km 10",
+  "numero": "S/N", "bairro": "Zona Rural", "cidade": "Sorriso", "cep": "78890000", "uf": "MT" }
+```
+> `numero` é **String** (aceita `"S/N"`, `"123A"`).
+
+**`POST /cultura`**
+```json
+{ "nome": "Soja", "diasAteColheita": 120, "umidadeSoloCritica": 20.0,
+  "temperaturaMinCritica": 10.0, "temperaturaMaxCritica": 35.0, "chuvaMinima": 5.0 }
+```
+
+**`POST /talhao`** (`centro` necessário para a previsão; `pontos` = polígono, `ordem` única)
+```json
+{ "produtorId": 1, "nome": "Talhão Norte", "areaHa": 50.0,
+  "centro": { "latitude": -12.5455, "longitude": -55.7215 },
+  "pontos": [ { "ordem": 1, "latitude": -12.544, "longitude": -55.722 },
+              { "ordem": 2, "latitude": -12.546, "longitude": -55.722 } ] }
+```
+
+**`POST /safra`**
+```json
+{ "talhaoId": 1, "culturaId": 1, "dataPlantio": "2026-03-01",
+  "dataPrevistaColheita": "2026-07-01", "statusSafra": "ATIVA" }
+```
+
+**`POST /dispositivo`**
+```json
+{ "codigoDispositivo": "ESP-001", "talhaoId": 1, "ativo": true }
+```
+
+**`POST /leitura`** (ESP32 — faixas físicas validadas: temp −50..60, umidades 0..100, radiação 0..1500)
+```json
+{ "codigoDispositivo": "ESP-001", "dataHora": "2026-06-05T14:30:00",
+  "temperatura": 28.5, "umidadeAr": 65.0, "umidadeSolo": 30.0, "radiacaoSolar": 800.0 }
+```
+
+### Respostas de erro (`ErrorResponse` padronizado)
+
+| Situação | Exemplo | Status |
+|---|---|---|
+| Campo obrigatório ausente / fora de faixa | `POST /leitura` com `temperatura: 99` | `400` (com `fieldErrors`) |
+| Recurso inexistente | `GET /produtor/999999` | `404` |
+| `cnpj`/`cpf`/código duplicado | `POST /cooperativa` com CNPJ repetido | `409` |
+| Dispositivo inativo na leitura | `POST /leitura` de dispositivo `ativo:false` | `409` |
+| Delete com dependentes / safra ATIVA | `DELETE /dispositivo/{id}` com safra ativa | `409` |
+
+> Roteiro de teste manual passo a passo: [`docs/testes-endpoints.md`](docs/testes-endpoints.md). Collection Postman: [`docs/postman/`](docs/postman).
 
 ---
 
@@ -101,13 +139,16 @@ Para que o motor funcione, é preciso antes montar a hierarquia de dados: cooper
 ```
 api-java/
 ├── src/main/java/com/safracerta/api/
-│   ├── config/        # OpenApiConfig, CorsConfig, SchedulingConfig
-│   ├── controller/    # Um controller por recurso
+│   ├── client/        # Integrações externas (client/openmeteo/) — IA (Gemini) entra no PRD 04
+│   ├── config/        # OpenApiConfig (Swagger)
+│   ├── controller/    # Um controller por recurso (+ assemblers HATEOAS)
 │   ├── dto/           # Records XxxRequest / XxxResponse
-│   ├── entity/        # 11 entidades + RegistroClimatico (abstrata) + 3 embeddables
+│   ├── entity/        # 11 entidades + RegistroClimatico (abstrata) + embeddables
 │   │   └── enums/     # NivelRisco, StatusSafra
+│   ├── exception/     # NotFoundException, ConflictException
+│   ├── handler/       # GlobalExceptionHandler (400/404/409), ErrorResponse
 │   ├── repository/    # Um JpaRepository por raiz de agregado
-│   └── service/       # CRUD services + MotorDeRiscoService + IaService
+│   └── service/       # CRUD services (Motor de Risco + IA no PRD 04)
 ├── src/main/resources/
 │   └── application.yml
 ├── .env.example
@@ -123,8 +164,8 @@ api-java/
 
 | Entidade | Tabela | Relacionamentos |
 |---|---|---|
-| `Cooperativa` | `COOPERATIVA` | 1:N → Produtor; `endereco` |
-| `Produtor` | `PRODUTOR` | N:1 → Cooperativa; 1:N → Talhao |
+| `Cooperativa` | `COOPERATIVA` | 1:N → Produtor; endereço (logradouro, numero, bairro, cidade, cep, uf) |
+| `Produtor` | `PRODUTOR` | N:1 → Cooperativa; 1:N → Talhao; mesmos campos de endereço |
 | `Cultura` | `CULTURA` | catálogo; 1:N → SafraTalhao |
 | `Dispositivo` | `DISPOSITIVO` | N:1 → Talhao; `codigoDispositivo` unique; `ativo` |
 | `Talhao` | `TALHAO` | N:1 → Produtor; `[Coordenada centro]`; 1:N → TalhaoPonto; 1:N → Dispositivo |
@@ -132,7 +173,7 @@ api-java/
 | `SafraTalhao` | `SAFRA_TALHAO` | N:1 → Talhao; N:1 → Cultura; 1:N → AnaliseTalhao |
 | `RegistroClimatico` | — (abstrata) | base `TABLE_PER_CLASS` (sem tabela); N:1 → Talhao; `dataHora` + grandezas |
 | `LeituraSensor` | `LEITURA_SENSOR` | herda `RegistroClimatico`; N:1 → Dispositivo |
-| `PrevisaoClimatica` | `PREVISAO_CLIMATICA` | herda `RegistroClimatico`; + `dataHoraPrevista`, `chuva` |
+| `PrevisaoClimatica` | `PREVISAO_CLIMATICA` | herda `RegistroClimatico`; + `dataHoraPrevista`, `chuva`, `temperaturaMin`, `temperaturaMax` |
 | `AnaliseTalhao` | `ANALISE_TALHAO` | N:1 → SafraTalhao; snapshot `[Medicao]` + `[Previsao]` |
 | `Alerta` | `ALERTA` | 1:1 → AnaliseTalhao (unique); criado só quando `NivelRisco ≠ NORMAL` |
 
@@ -142,7 +183,7 @@ api-java/
 |---|---|---|
 | `Coordenada` | `latitude`, `longitude` | `Talhao`, `TalhaoPonto` |
 | `Medicao` | `temperatura`, `umidadeAr`, `radiacaoSolar`, `umidadeSolo?` | `AnaliseTalhao` (snapshot) |
-| `Previsao` | `chuva`, `umidadeAr`, `temperatura`, `radiacaoSolar`, `umidadeSolo` | `AnaliseTalhao` (snapshot, `@AttributeOverrides`) |
+| `Previsao` | `chuva`, `umidadeAr`, `temperatura`, `temperaturaMin`, `temperaturaMax`, `radiacaoSolar`, `umidadeSolo` | `AnaliseTalhao` (snapshot, `@AttributeOverrides`) |
 
 > A herança climática (`RegistroClimatico` → `LeituraSensor`/`PrevisaoClimatica`) usa `TABLE_PER_CLASS`: cada subclasse tem sua tabela completa, sem tabela base. Detalhe na **ADR 01**.
 
@@ -157,8 +198,10 @@ api-java/
 
 ## Arquitetura do Motor de Risco
 
+> ⚠️ **Planejado — PRD 04.** Ainda **não** implementado. Hoje o `POST /leitura` apenas persiste a leitura e coleta a previsão; o cálculo de risco e a IA entram na próxima fase. Diagrama abaixo é o desenho-alvo.
+
 ```
-POST /leituras  (ESP32)
+POST /leitura  (ESP32)
       │
       ▼
 LeituraSensorService ─salva LeituraSensor────────────────────┐
@@ -244,7 +287,7 @@ Swagger UI: `http://localhost:8080/swagger-ui.html`
 ## Tecnologias Utilizadas
 
 - **Java 21** / Spring Boot 3.3.5
-- **Spring AI 1.0.0** — Google GenAI (Gemini 2.0 Flash via AI Studio)
+- **Spring AI** — Google GenAI (Gemini 2.0 Flash) — _desabilitado até o PRD 04_
 - **Spring Data JPA + Hibernate** — 10 entidades Oracle
 - **Spring HATEOAS** — hypermedia nos responses
 - **Oracle XE 21** (Docker `gvenzl/oracle-xe:21-slim`)
