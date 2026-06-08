@@ -1,5 +1,9 @@
 HELP.md
 target/
+
+# Segredos — nunca commitar
+.env
+
 !.mvn/wrapper/maven-wrapper.jar
 !.mvn/wrapper/maven-wrapper.properties
 

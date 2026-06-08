@@ -1,0 +1,55 @@
+services:
+
+  oracle-xe:
+    image: gvenzl/oracle-xe:21-slim
+    container_name: safracerta_oracle_565339
+    env_file:
+      - .env
+    environment:
+      ORACLE_PASSWORD: ${ORACLE_ROOT_PASSWORD}
+      APP_USER: ${ORACLE_APP_USER}
+      APP_USER_PASSWORD: ${ORACLE_APP_PASSWORD}
+      ORACLE_CHARACTERSET: AL32UTF8
+    ports:
+      - "1521:1521"
+    volumes:
+      - oracle_data:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+      start_period: 300s
+    networks:
+      - safracerta-net
+    restart: unless-stopped
+
+  api-java:
+    container_name: safracerta_java_565339
+    build:
+      context: .
+    env_file:
+      - .env
+    environment:
+      ORACLE_URL: ${ORACLE_URL}
+      ORACLE_USER: ${ORACLE_APP_USER}
+      ORACLE_PASSWORD: ${ORACLE_APP_PASSWORD}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      # Cap do heap da JVM p/ caber na VM de 4 GB (Oracle XE já consome ~2 GB). Suba se a VM for maior.
+      JAVA_TOOL_OPTIONS: "-Xmx512m"
+    mem_limit: 1g
+    depends_on:
+      oracle-xe:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    networks:
+      - safracerta-net
+    restart: unless-stopped
+
+networks:
+  safracerta-net:
+    driver: bridge
+
+volumes:
+  oracle_data:
