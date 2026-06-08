@@ -9,7 +9,7 @@ import lombok.*;
  * não restrição de modelo. Ver PRD de ingestão/dispositivos.
  */
 @Entity
-@Table(name = "DISPOSITIVO")
+@Table(name = "T_SC_DISPOSITIVO")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,16 +18,17 @@ public class Dispositivo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_dispositivo")
-    @SequenceGenerator(name = "seq_dispositivo", sequenceName = "SEQ_DISPOSITIVO", allocationSize = 1)
+    @SequenceGenerator(name = "seq_dispositivo", sequenceName = "SEQ_T_SC_DISPOSITIVO", allocationSize = 1)
+    @Column(name = "ID_DISPOSITIVO")
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "CD_DISPOSITIVO", nullable = false, unique = true)
     private String codigoDispositivo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "talhao_id", nullable = false)
+    @JoinColumn(name = "ID_TALHAO", nullable = false)
     private Talhao talhao;
 
-    @Column(nullable = false)
+    @Column(name = "AT_ATIVO", nullable = false)
     private Boolean ativo;
 }

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "TALHAO")
+@Table(name = "T_SC_TALHAO")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,16 +17,18 @@ public class Talhao {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_talhao")
-    @SequenceGenerator(name = "seq_talhao", sequenceName = "SEQ_TALHAO", allocationSize = 1)
+    @SequenceGenerator(name = "seq_talhao", sequenceName = "SEQ_T_SC_TALHAO", allocationSize = 1)
+    @Column(name = "ID_TALHAO")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "produtor_id", nullable = false)
+    @JoinColumn(name = "ID_PRODUTOR", nullable = false)
     private Produtor produtor;
 
-    @Column(nullable = false)
+    @Column(name = "NM_NOME", nullable = false)
     private String nome;
 
+    @Column(name = "NR_AREA_HA")
     private Double areaHa;
 
     @Embedded

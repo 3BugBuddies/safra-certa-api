@@ -20,18 +20,26 @@ public abstract class RegistroClimatico {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_registro_climatico")
-    @SequenceGenerator(name = "seq_registro_climatico", sequenceName = "SEQ_REGISTRO_CLIMATICO", allocationSize = 1)
+    @SequenceGenerator(name = "seq_registro_climatico", sequenceName = "SEQ_T_SC_REGISTRO_CLIMATICO", allocationSize = 1)
+    @Column(name = "ID_REGISTRO_CLIMATICO")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "talhao_id", nullable = false)
+    @JoinColumn(name = "ID_TALHAO", nullable = false)
     private Talhao talhao;
 
-    @Column(nullable = false)
+    @Column(name = "DT_DATA_HORA", nullable = false)
     private LocalDateTime dataHora;
 
+    @Column(name = "NR_TEMPERATURA")
     private Double temperatura;
+
+    @Column(name = "NR_UMIDADE_AR")
     private Double umidadeAr;
+
+    @Column(name = "NR_UMIDADE_SOLO")
     private Double umidadeSolo;
+
+    @Column(name = "NR_RADIACAO_SOLAR")
     private Double radiacaoSolar;
 }

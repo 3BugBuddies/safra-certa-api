@@ -1,5 +1,6 @@
 package com.safracerta.api.entity.embeddable;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +13,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Coordenada {
+
+    @Column(name = "NR_LATITUDE")
     private Double latitude;
+
+    @Column(name = "NR_LONGITUDE")
     private Double longitude;
 }

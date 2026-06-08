@@ -8,13 +8,13 @@ import lombok.*;
  * Herda talhão, dataHora e grandezas de {@link RegistroClimatico}.
  */
 @Entity
-@Table(name = "LEITURA_SENSOR")
+@Table(name = "T_SC_LEITURA_SENSOR")
 @Getter
 @Setter
 @NoArgsConstructor
 public class LeituraSensor extends RegistroClimatico {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "dispositivo_id", nullable = false)
+    @JoinColumn(name = "ID_DISPOSITIVO", nullable = false)
     private Dispositivo dispositivo;
 }

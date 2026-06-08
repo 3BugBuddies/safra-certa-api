@@ -11,18 +11,22 @@ import java.time.LocalDateTime;
  * {@link RegistroClimatico}; adiciona o horizonte previsto e a chuva.
  */
 @Entity
-@Table(name = "PREVISAO_CLIMATICA")
+@Table(name = "T_SC_PREVISAO_CLIMATICA")
 @Getter
 @Setter
 @NoArgsConstructor
 public class PrevisaoClimatica extends RegistroClimatico {
 
-    @Column(nullable = false)
+    @Column(name = "DT_HORA_PREVISTA", nullable = false)
     private LocalDateTime dataHoraPrevista;
 
+    @Column(name = "NR_CHUVA")
     private Double chuva;
 
     /** Temperatura herdada = média do dia. Min/Max do D+1 para risco térmico (geada × calor). */
+    @Column(name = "NR_TEMP_MIN")
     private Double temperaturaMin;
+
+    @Column(name = "NR_TEMP_MAX")
     private Double temperaturaMax;
 }
