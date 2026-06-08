@@ -1,7 +1,10 @@
 package com.safracerta.api.controller;
+import com.safracerta.api.assembler.TalhaoModelAssembler;
+import com.safracerta.api.assembler.TalhaoSituacaoAssembler;
 
-import com.safracerta.api.dto.TalhaoRequest;
-import com.safracerta.api.dto.TalhaoResponse;
+import com.safracerta.api.dto.talhao.TalhaoRequest;
+import com.safracerta.api.dto.talhao.TalhaoResponse;
+import com.safracerta.api.dto.talhao.TalhaoSituacaoResponse;
 import com.safracerta.api.entity.Talhao;
 import com.safracerta.api.service.TalhaoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,10 +27,13 @@ public class TalhaoController {
 
     private final TalhaoService service;
     private final TalhaoModelAssembler assembler;
+    private final TalhaoSituacaoAssembler situacaoAssembler;
 
-    public TalhaoController(TalhaoService service, TalhaoModelAssembler assembler) {
+    public TalhaoController(TalhaoService service, TalhaoModelAssembler assembler,
+                            TalhaoSituacaoAssembler situacaoAssembler) {
         this.service = service;
         this.assembler = assembler;
+        this.situacaoAssembler = situacaoAssembler;
     }
 
     @GetMapping
@@ -66,5 +72,11 @@ public class TalhaoController {
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         service.deletar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/situacao")
+    @Operation(summary = "Situação atual de um talhão (cultura, última medição, nível de risco, polígono)")
+    public EntityModel<TalhaoSituacaoResponse> situacao(@PathVariable Long id) {
+        return situacaoAssembler.toModel(service.situacao(id));
     }
 }

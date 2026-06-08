@@ -1,7 +1,12 @@
 package com.safracerta.api.controller;
+import com.safracerta.api.assembler.CooperativaModelAssembler;
+import com.safracerta.api.assembler.PainelCooperativaAssembler;
+import com.safracerta.api.assembler.ProdutorCardAssembler;
 
-import com.safracerta.api.dto.CooperativaRequest;
-import com.safracerta.api.dto.CooperativaResponse;
+import com.safracerta.api.dto.cooperativa.CooperativaRequest;
+import com.safracerta.api.dto.cooperativa.CooperativaResponse;
+import com.safracerta.api.dto.cooperativa.PainelCooperativaResponse;
+import com.safracerta.api.dto.produtor.ProdutorCardResponse;
 import com.safracerta.api.entity.Cooperativa;
 import com.safracerta.api.service.CooperativaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,10 +29,16 @@ public class CooperativaController {
 
     private final CooperativaService service;
     private final CooperativaModelAssembler assembler;
+    private final PainelCooperativaAssembler painelAssembler;
+    private final ProdutorCardAssembler produtorCardAssembler;
 
-    public CooperativaController(CooperativaService service, CooperativaModelAssembler assembler) {
+    public CooperativaController(CooperativaService service, CooperativaModelAssembler assembler,
+                                 PainelCooperativaAssembler painelAssembler,
+                                 ProdutorCardAssembler produtorCardAssembler) {
         this.service = service;
         this.assembler = assembler;
+        this.painelAssembler = painelAssembler;
+        this.produtorCardAssembler = produtorCardAssembler;
     }
 
     @GetMapping
@@ -65,5 +76,20 @@ public class CooperativaController {
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         service.deletar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/painel")
+    @Operation(summary = "Painel agregado da cooperativa (contadores + distribuição de risco por talhão)")
+    public EntityModel<PainelCooperativaResponse> painel(@PathVariable Long id) {
+        return painelAssembler.toModel(service.painel(id));
+    }
+
+    @GetMapping("/{id}/produtores")
+    @Operation(summary = "Cards de produtor com agregados (área, nº talhões, nº em risco, nível agregado)")
+    public CollectionModel<EntityModel<ProdutorCardResponse>> produtoresCards(@PathVariable Long id) {
+        List<EntityModel<ProdutorCardResponse>> itens = service.produtoresCards(id).stream()
+                .map(produtorCardAssembler::toModel).toList();
+        return CollectionModel.of(itens,
+                linkTo(methodOn(CooperativaController.class).produtoresCards(id)).withSelfRel());
     }
 }

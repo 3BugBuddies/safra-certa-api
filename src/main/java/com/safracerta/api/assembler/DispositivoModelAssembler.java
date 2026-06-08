@@ -1,6 +1,7 @@
-package com.safracerta.api.controller;
+package com.safracerta.api.assembler;
+import com.safracerta.api.controller.DispositivoController;
 
-import com.safracerta.api.dto.DispositivoResponse;
+import com.safracerta.api.dto.dispositivo.DispositivoResponse;
 import com.safracerta.api.entity.Dispositivo;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;

@@ -1,10 +1,12 @@
 package com.safracerta.api.service;
 
+import com.safracerta.api.exception.ConflictException;
 import com.safracerta.api.exception.NotFoundException;
-import com.safracerta.api.dto.SafraTalhaoRequest;
+import com.safracerta.api.dto.safra.SafraTalhaoRequest;
 import com.safracerta.api.entity.Cultura;
 import com.safracerta.api.entity.SafraTalhao;
 import com.safracerta.api.entity.Talhao;
+import com.safracerta.api.entity.enums.StatusSafra;
 import com.safracerta.api.repository.CulturaRepository;
 import com.safracerta.api.repository.SafraTalhaoRepository;
 import com.safracerta.api.repository.TalhaoRepository;
@@ -42,6 +44,10 @@ public class SafraTalhaoService {
     public SafraTalhao criar(SafraTalhaoRequest req) {
         Talhao talhao = resolverTalhao(req.talhaoId());
         Cultura cultura = resolverCultura(req.culturaId());
+        if (resultaEmAtiva(req)
+                && repository.existsByTalhaoIdAndStatusSafra(req.talhaoId(), StatusSafra.ATIVA)) {
+            throw new ConflictException("Talhão já possui safra ativa: " + req.talhaoId());
+        }
         return repository.save(req.toEntity(talhao, cultura));
     }
 
@@ -50,8 +56,21 @@ public class SafraTalhaoService {
         SafraTalhao s = buscar(id);
         Talhao talhao = resolverTalhao(req.talhaoId());
         Cultura cultura = resolverCultura(req.culturaId());
+        if (resultaEmAtiva(req) && existeOutraSafraAtiva(req.talhaoId(), id)) {
+            throw new ConflictException("Talhão já possui safra ativa: " + req.talhaoId());
+        }
         req.applyTo(s, talhao, cultura);
         return repository.save(s);
+    }
+
+    /** statusSafra ausente no request equivale a ATIVA (default da entidade). */
+    private boolean resultaEmAtiva(SafraTalhaoRequest req) {
+        return req.statusSafra() == null || req.statusSafra() == StatusSafra.ATIVA;
+    }
+
+    private boolean existeOutraSafraAtiva(Long talhaoId, Long ignorarId) {
+        return repository.findByTalhaoId(talhaoId).stream()
+                .anyMatch(s -> s.getStatusSafra() == StatusSafra.ATIVA && !s.getId().equals(ignorarId));
     }
 
     @Transactional

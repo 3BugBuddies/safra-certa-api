@@ -1,6 +1,6 @@
 package com.safracerta.api.client.openmeteo;
 
-import com.safracerta.api.entity.Coordenada;
+import com.safracerta.api.entity.embeddable.Coordenada;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 

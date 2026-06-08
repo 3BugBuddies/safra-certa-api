@@ -1,7 +1,8 @@
 package com.safracerta.api.controller;
+import com.safracerta.api.assembler.SafraTalhaoModelAssembler;
 
-import com.safracerta.api.dto.SafraTalhaoRequest;
-import com.safracerta.api.dto.SafraTalhaoResponse;
+import com.safracerta.api.dto.safra.SafraTalhaoRequest;
+import com.safracerta.api.dto.safra.SafraTalhaoResponse;
 import com.safracerta.api.entity.SafraTalhao;
 import com.safracerta.api.service.SafraTalhaoService;
 import io.swagger.v3.oas.annotations.Operation;

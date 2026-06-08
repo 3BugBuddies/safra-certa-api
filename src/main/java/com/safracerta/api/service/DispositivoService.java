@@ -1,14 +1,12 @@
 package com.safracerta.api.service;
 
-import com.safracerta.api.dto.DispositivoRequest;
+import com.safracerta.api.dto.dispositivo.DispositivoRequest;
 import com.safracerta.api.entity.Dispositivo;
 import com.safracerta.api.entity.Talhao;
-import com.safracerta.api.entity.enums.StatusSafra;
 import com.safracerta.api.exception.ConflictException;
 import com.safracerta.api.exception.NotFoundException;
 import com.safracerta.api.repository.DispositivoRepository;
 import com.safracerta.api.repository.LeituraSensorRepository;
-import com.safracerta.api.repository.SafraTalhaoRepository;
 import com.safracerta.api.repository.TalhaoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,13 +18,11 @@ public class DispositivoService {
 
     private final DispositivoRepository repository;
     private final TalhaoRepository talhaoRepository;
-    private final SafraTalhaoRepository safraTalhaoRepository;
     private final LeituraSensorRepository leituraSensorRepository;
 
-    public DispositivoService(DispositivoRepository repository, TalhaoRepository talhaoRepository, SafraTalhaoRepository safraTalhaoRepository, LeituraSensorRepository leituraSensorRepository) {
+    public DispositivoService(DispositivoRepository repository, TalhaoRepository talhaoRepository, LeituraSensorRepository leituraSensorRepository) {
         this.repository = repository;
         this.talhaoRepository = talhaoRepository;
-        this.safraTalhaoRepository = safraTalhaoRepository;
         this.leituraSensorRepository = leituraSensorRepository;
     }
 
@@ -66,13 +62,10 @@ public class DispositivoService {
         return repository.save(d);
     }
 
+    /** Remove o dispositivo e suas leituras (sem barreira de safra ativa). */
     @Transactional
     public void deletar(Long id) {
         Dispositivo d = buscar(id);
-        Long talhaoId = d.getTalhao().getId();
-        if (safraTalhaoRepository.existsByTalhaoIdAndStatusSafra(talhaoId, StatusSafra.ATIVA)) {
-            throw new ConflictException("Talhão possui safra ativa; remoção do dispositivo bloqueada.");
-        }
         leituraSensorRepository.deleteByDispositivoId(id);
         repository.delete(d);
     }

@@ -1,6 +1,7 @@
-package com.safracerta.api.controller;
+package com.safracerta.api.assembler;
+import com.safracerta.api.controller.CulturaController;
 
-import com.safracerta.api.dto.CulturaResponse;
+import com.safracerta.api.dto.cultura.CulturaResponse;
 import com.safracerta.api.entity.Cultura;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;

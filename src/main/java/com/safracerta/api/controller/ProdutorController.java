@@ -1,7 +1,10 @@
 package com.safracerta.api.controller;
+import com.safracerta.api.assembler.ProdutorModelAssembler;
+import com.safracerta.api.assembler.TalhaoSituacaoAssembler;
 
-import com.safracerta.api.dto.ProdutorRequest;
-import com.safracerta.api.dto.ProdutorResponse;
+import com.safracerta.api.dto.produtor.ProdutorRequest;
+import com.safracerta.api.dto.produtor.ProdutorResponse;
+import com.safracerta.api.dto.talhao.TalhaoSituacaoResponse;
 import com.safracerta.api.entity.Produtor;
 import com.safracerta.api.service.ProdutorService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,10 +27,13 @@ public class ProdutorController {
 
     private final ProdutorService service;
     private final ProdutorModelAssembler assembler;
+    private final TalhaoSituacaoAssembler situacaoAssembler;
 
-    public ProdutorController(ProdutorService service, ProdutorModelAssembler assembler) {
+    public ProdutorController(ProdutorService service, ProdutorModelAssembler assembler,
+                              TalhaoSituacaoAssembler situacaoAssembler) {
         this.service = service;
         this.assembler = assembler;
+        this.situacaoAssembler = situacaoAssembler;
     }
 
     @GetMapping
@@ -66,5 +72,14 @@ public class ProdutorController {
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         service.deletar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/talhoes")
+    @Operation(summary = "Situação de cada talhão do produtor (mapa de talhões)")
+    public CollectionModel<EntityModel<TalhaoSituacaoResponse>> talhoesSituacao(@PathVariable Long id) {
+        List<EntityModel<TalhaoSituacaoResponse>> itens = service.talhoesSituacao(id).stream()
+                .map(situacaoAssembler::toModel).toList();
+        return CollectionModel.of(itens,
+                linkTo(methodOn(ProdutorController.class).talhoesSituacao(id)).withSelfRel());
     }
 }

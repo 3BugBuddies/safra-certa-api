@@ -1,6 +1,6 @@
 package com.safracerta.api.controller;
 
-import com.safracerta.api.dto.PrevisaoResponse;
+import com.safracerta.api.dto.previsao.PrevisaoResponse;
 import com.safracerta.api.service.PrevisaoClimaticaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

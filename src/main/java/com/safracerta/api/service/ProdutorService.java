@@ -2,12 +2,15 @@ package com.safracerta.api.service;
 
 import com.safracerta.api.exception.ConflictException;
 import com.safracerta.api.exception.NotFoundException;
-import com.safracerta.api.dto.ProdutorRequest;
+import com.safracerta.api.dto.produtor.ProdutorCardResponse;
+import com.safracerta.api.dto.produtor.ProdutorRequest;
+import com.safracerta.api.dto.talhao.TalhaoSituacaoResponse;
 import com.safracerta.api.entity.Cooperativa;
 import com.safracerta.api.entity.Produtor;
+import com.safracerta.api.entity.Talhao;
+import com.safracerta.api.entity.enums.NivelRisco;
 import com.safracerta.api.repository.CooperativaRepository;
 import com.safracerta.api.repository.ProdutorRepository;
-import com.safracerta.api.repository.TalhaoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,14 +21,14 @@ public class ProdutorService {
 
     private final ProdutorRepository repository;
     private final CooperativaRepository cooperativaRepository;
-    private final TalhaoRepository talhaoRepository;
+    private final TalhaoService talhaoService;
 
     public ProdutorService(ProdutorRepository repository,
                            CooperativaRepository cooperativaRepository,
-                           TalhaoRepository talhaoRepository) {
+                           TalhaoService talhaoService) {
         this.repository = repository;
         this.cooperativaRepository = cooperativaRepository;
-        this.talhaoRepository = talhaoRepository;
+        this.talhaoService = talhaoService;
     }
 
     public List<Produtor> listar(Long cooperativaId) {
@@ -58,13 +61,48 @@ public class ProdutorService {
         return repository.save(p);
     }
 
+    /** Cascata: remove todos os talhões do produtor (e o que pende deles) antes do próprio. */
     @Transactional
     public void deletar(Long id) {
         Produtor p = buscar(id);
-        if (talhaoRepository.existsByProdutorId(id)) {
-            throw new ConflictException("Produtor possui talhões vinculados; remova-os antes.");
+        for (Talhao t : List.copyOf(p.getTalhoes())) {
+            talhaoService.deletar(t.getId());
         }
         repository.delete(p);
+    }
+
+    // ── Visões de leitura ────────────────────────────────────────────────────
+
+    /** Situação de cada talhão do produtor (mapa de talhões). */
+    @Transactional(readOnly = true)
+    public List<TalhaoSituacaoResponse> talhoesSituacao(Long id) {
+        Produtor p = buscar(id);
+        return p.getTalhoes().stream().map(talhaoService::montarSituacao).toList();
+    }
+
+    /** Card agregado de um produtor: área total, nº talhões, nº em risco e pior nível. */
+    public ProdutorCardResponse cardDe(Produtor p) {
+        double areaTotal = 0;
+        long emRisco = 0;
+        NivelRisco pior = null;
+        for (Talhao t : p.getTalhoes()) {
+            if (t.getAreaHa() != null) {
+                areaTotal += t.getAreaHa();
+            }
+            NivelRisco nivel = talhaoService.nivelAtual(t.getId());
+            if (nivel == null) {
+                continue;
+            }
+            if (nivel == NivelRisco.ALERTA || nivel == NivelRisco.CRITICO) {
+                emRisco++;
+            }
+            if (pior == null || nivel.ordinal() > pior.ordinal()) {
+                pior = nivel;
+            }
+        }
+        return new ProdutorCardResponse(
+                p.getId(), p.getNome(), p.getCidade(), p.getUf(), p.getTelefone(),
+                areaTotal, p.getTalhoes().size(), emRisco, pior);
     }
 
     private Cooperativa resolverCooperativa(Long cooperativaId) {

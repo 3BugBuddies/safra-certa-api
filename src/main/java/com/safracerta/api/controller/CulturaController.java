@@ -1,7 +1,8 @@
 package com.safracerta.api.controller;
+import com.safracerta.api.assembler.CulturaModelAssembler;
 
-import com.safracerta.api.dto.CulturaRequest;
-import com.safracerta.api.dto.CulturaResponse;
+import com.safracerta.api.dto.cultura.CulturaRequest;
+import com.safracerta.api.dto.cultura.CulturaResponse;
 import com.safracerta.api.entity.Cultura;
 import com.safracerta.api.service.CulturaService;
 import io.swagger.v3.oas.annotations.Operation;

@@ -2,7 +2,7 @@ package com.safracerta.api.service;
 
 import com.safracerta.api.exception.ConflictException;
 import com.safracerta.api.exception.NotFoundException;
-import com.safracerta.api.dto.CulturaRequest;
+import com.safracerta.api.dto.cultura.CulturaRequest;
 import com.safracerta.api.entity.Cultura;
 import com.safracerta.api.repository.CulturaRepository;
 import com.safracerta.api.repository.SafraTalhaoRepository;

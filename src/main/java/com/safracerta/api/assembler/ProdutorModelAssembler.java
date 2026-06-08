@@ -1,6 +1,7 @@
-package com.safracerta.api.controller;
+package com.safracerta.api.assembler;
+import com.safracerta.api.controller.ProdutorController;
 
-import com.safracerta.api.dto.ProdutorResponse;
+import com.safracerta.api.dto.produtor.ProdutorResponse;
 import com.safracerta.api.entity.Produtor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;

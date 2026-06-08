@@ -1,6 +1,7 @@
-package com.safracerta.api.controller;
+package com.safracerta.api.assembler;
+import com.safracerta.api.controller.CooperativaController;
 
-import com.safracerta.api.dto.CooperativaResponse;
+import com.safracerta.api.dto.cooperativa.CooperativaResponse;
 import com.safracerta.api.entity.Cooperativa;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;

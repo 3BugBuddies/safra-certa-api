@@ -1,7 +1,7 @@
 package com.safracerta.api.controller;
 
-import com.safracerta.api.dto.LeituraRequest;
-import com.safracerta.api.dto.LeituraResponse;
+import com.safracerta.api.dto.leitura.LeituraRequest;
+import com.safracerta.api.dto.leitura.LeituraResponse;
 import com.safracerta.api.entity.LeituraSensor;
 import com.safracerta.api.service.LeituraSensorService;
 import io.swagger.v3.oas.annotations.Operation;

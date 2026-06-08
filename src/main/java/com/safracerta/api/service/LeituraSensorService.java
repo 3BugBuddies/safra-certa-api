@@ -3,7 +3,7 @@ package com.safracerta.api.service;
 import com.safracerta.api.client.openmeteo.OpenMeteoClient;
 import com.safracerta.api.client.openmeteo.OpenMeteoMapper;
 import com.safracerta.api.client.openmeteo.OpenMeteoProperties;
-import com.safracerta.api.dto.LeituraRequest;
+import com.safracerta.api.dto.leitura.LeituraRequest;
 import com.safracerta.api.entity.Dispositivo;
 import com.safracerta.api.entity.LeituraSensor;
 import com.safracerta.api.entity.PrevisaoClimatica;
@@ -33,19 +33,22 @@ public class LeituraSensorService {
     private final OpenMeteoClient openMeteoClient;
     private final OpenMeteoMapper openMeteoMapper;
     private final OpenMeteoProperties props;
+    private final MotorDeRiscoService motorDeRiscoService;
 
     public LeituraSensorService(LeituraSensorRepository repository,
                                 DispositivoRepository dispositivoRepository,
                                 PrevisaoClimaticaRepository previsaoRepository,
                                 OpenMeteoClient openMeteoClient,
                                 OpenMeteoMapper openMeteoMapper,
-                                OpenMeteoProperties props) {
+                                OpenMeteoProperties props,
+                                MotorDeRiscoService motorDeRiscoService) {
         this.repository = repository;
         this.dispositivoRepository = dispositivoRepository;
         this.previsaoRepository = previsaoRepository;
         this.openMeteoClient = openMeteoClient;
         this.openMeteoMapper = openMeteoMapper;
         this.props = props;
+        this.motorDeRiscoService = motorDeRiscoService;
     }
 
     public List<LeituraSensor> listar(Long talhaoId) {
@@ -65,6 +68,7 @@ public class LeituraSensorService {
 
         LeituraSensor leitura = repository.save(req.toEntity(dispositivo));
         atualizarPrevisaoComThrottle(dispositivo.getTalhao());
+        motorDeRiscoService.avaliar(leitura);
         return leitura;
     }
 

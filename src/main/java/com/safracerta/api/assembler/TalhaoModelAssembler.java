@@ -1,6 +1,7 @@
-package com.safracerta.api.controller;
+package com.safracerta.api.assembler;
+import com.safracerta.api.controller.TalhaoController;
 
-import com.safracerta.api.dto.TalhaoResponse;
+import com.safracerta.api.dto.talhao.TalhaoResponse;
 import com.safracerta.api.entity.Talhao;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;

@@ -1,7 +1,8 @@
 package com.safracerta.api.controller;
+import com.safracerta.api.assembler.DispositivoModelAssembler;
 
-import com.safracerta.api.dto.DispositivoRequest;
-import com.safracerta.api.dto.DispositivoResponse;
+import com.safracerta.api.dto.dispositivo.DispositivoRequest;
+import com.safracerta.api.dto.dispositivo.DispositivoResponse;
 import com.safracerta.api.entity.Dispositivo;
 import com.safracerta.api.service.DispositivoService;
 import io.swagger.v3.oas.annotations.Operation;
