@@ -1,15 +1,18 @@
-package com.safracerta.api.dto;
+package com.safracerta.api.dto.cultura;
 
 import com.safracerta.api.entity.Cultura;
+import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 public record CulturaRequest(
         @NotBlank String nome,
-        Integer diasAteColheita,
-        Double umidadeSoloCritica,
-        Double temperaturaMinCritica,
+        @Positive Integer diasAteColheita,
+        @PositiveOrZero @DecimalMax("100.0") Double umidadeSoloCritica,
+        Double temperaturaMinCritica,   // pode ser negativa (geada) — sem restrição de sinal
         Double temperaturaMaxCritica,
-        Double chuvaMinima
+        @PositiveOrZero Double chuvaMinima
 ) {
     public Cultura toEntity() {
         Cultura c = new Cultura();

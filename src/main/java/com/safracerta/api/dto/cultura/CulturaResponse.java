@@ -1,4 +1,4 @@
-package com.safracerta.api.dto;
+package com.safracerta.api.dto.cultura;
 
 import com.safracerta.api.entity.Cultura;
 

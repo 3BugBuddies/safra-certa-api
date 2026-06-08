@@ -3,6 +3,9 @@ package com.safracerta.api.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "COOPERATIVA")
 @Getter
@@ -32,4 +35,7 @@ public class Cooperativa {
     private String cidade;
     private String cep;
     private String uf;
+
+    @OneToMany(mappedBy = "cooperativa", fetch = FetchType.LAZY)
+    private List<Produtor> produtores = new ArrayList<>();
 }

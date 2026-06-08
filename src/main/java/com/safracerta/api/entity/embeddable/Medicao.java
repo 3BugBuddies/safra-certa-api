@@ -1,4 +1,4 @@
-package com.safracerta.api.entity;
+package com.safracerta.api.entity.embeddable;
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Coordenada {
-    private Double latitude;
-    private Double longitude;
+public class Medicao {
+    private Double temperatura;
+    private Double umidadeAr;
+    private Double radiacaoSolar;
+    private Double umidadeSolo;
 }

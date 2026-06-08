@@ -1,4 +1,4 @@
-package com.safracerta.api.dto;
+package com.safracerta.api.dto.cooperativa;
 
 import com.safracerta.api.entity.Cooperativa;
 

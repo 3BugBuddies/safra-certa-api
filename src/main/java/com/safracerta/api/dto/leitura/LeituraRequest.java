@@ -1,4 +1,4 @@
-package com.safracerta.api.dto;
+package com.safracerta.api.dto.leitura;
 
 import com.safracerta.api.entity.Dispositivo;
 import com.safracerta.api.entity.LeituraSensor;

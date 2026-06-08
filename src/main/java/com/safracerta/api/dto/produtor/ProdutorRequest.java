@@ -1,18 +1,18 @@
-package com.safracerta.api.dto;
+package com.safracerta.api.dto.produtor;
 
 import com.safracerta.api.entity.Cooperativa;
 import com.safracerta.api.entity.Produtor;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDate;
 
 public record ProdutorRequest(
         @NotNull Long cooperativaId,
         @NotBlank String nome,
-        String telefone,
-        @NotBlank @Size(min = 11, max = 14) String cpf,
+        @Pattern(regexp = "\\d{10,11}", message = "telefone deve ter 10 ou 11 dígitos") String telefone,
+        @NotBlank @Pattern(regexp = "\\d{11}", message = "CPF deve ter 11 dígitos") String cpf,
         LocalDate dataNascimento,
         String nomePropriedade,
         String caf,
@@ -20,8 +20,8 @@ public record ProdutorRequest(
         String numero,
         String bairro,
         String cidade,
-        String cep,
-        String uf
+        @Pattern(regexp = "\\d{8}", message = "CEP deve ter 8 dígitos") String cep,
+        @Pattern(regexp = "[A-Z]{2}", message = "UF deve ter 2 letras maiúsculas") String uf
 ) {
     public Produtor toEntity(Cooperativa cooperativa) {
         Produtor p = new Produtor();

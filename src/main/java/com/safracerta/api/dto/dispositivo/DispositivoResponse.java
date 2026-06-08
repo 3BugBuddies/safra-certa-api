@@ -1,4 +1,4 @@
-package com.safracerta.api.dto;
+package com.safracerta.api.dto.dispositivo;
 
 import com.safracerta.api.entity.Dispositivo;
 

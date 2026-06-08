@@ -1,4 +1,4 @@
-package com.safracerta.api.dto;
+package com.safracerta.api.dto.safra;
 
 import com.safracerta.api.entity.SafraTalhao;
 import com.safracerta.api.entity.enums.StatusSafra;

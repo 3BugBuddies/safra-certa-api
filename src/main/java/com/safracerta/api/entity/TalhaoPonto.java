@@ -1,4 +1,5 @@
 package com.safracerta.api.entity;
+import com.safracerta.api.entity.embeddable.Coordenada;
 
 import jakarta.persistence.*;
 import lombok.*;

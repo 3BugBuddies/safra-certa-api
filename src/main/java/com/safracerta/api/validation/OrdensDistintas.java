@@ -1,4 +1,4 @@
-package com.safracerta.api.dto;
+package com.safracerta.api.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

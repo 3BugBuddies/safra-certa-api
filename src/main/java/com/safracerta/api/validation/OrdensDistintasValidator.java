@@ -1,4 +1,6 @@
-package com.safracerta.api.dto;
+package com.safracerta.api.validation;
+import com.safracerta.api.dto.talhao.TalhaoRequest;
+import com.safracerta.api.dto.talhao.TalhaoPontoDto;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

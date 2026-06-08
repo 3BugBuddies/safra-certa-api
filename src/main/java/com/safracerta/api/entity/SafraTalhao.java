@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "SAFRA_TALHAO")
@@ -35,4 +37,7 @@ public class SafraTalhao {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatusSafra statusSafra = StatusSafra.ATIVA;
+
+    @OneToMany(mappedBy = "safraTalhao", fetch = FetchType.LAZY)
+    private List<AnaliseTalhao> analises = new ArrayList<>();
 }

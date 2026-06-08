@@ -1,4 +1,4 @@
-package com.safracerta.api.entity;
+package com.safracerta.api.entity.embeddable;
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;

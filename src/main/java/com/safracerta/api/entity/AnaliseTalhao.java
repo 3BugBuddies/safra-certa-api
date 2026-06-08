@@ -1,4 +1,6 @@
 package com.safracerta.api.entity;
+import com.safracerta.api.entity.embeddable.Previsao;
+import com.safracerta.api.entity.embeddable.Medicao;
 
 import com.safracerta.api.entity.enums.NivelRisco;
 import jakarta.persistence.*;

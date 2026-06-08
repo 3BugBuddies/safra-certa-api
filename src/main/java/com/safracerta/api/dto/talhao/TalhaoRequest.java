@@ -1,12 +1,14 @@
-package com.safracerta.api.dto;
+package com.safracerta.api.dto.talhao;
+import com.safracerta.api.validation.OrdensDistintas;
 
-import com.safracerta.api.entity.Coordenada;
+import com.safracerta.api.entity.embeddable.Coordenada;
 import com.safracerta.api.entity.Produtor;
 import com.safracerta.api.entity.Talhao;
 import com.safracerta.api.entity.TalhaoPonto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 
 import java.util.List;
 
@@ -14,7 +16,7 @@ import java.util.List;
 public record TalhaoRequest(
         @NotNull Long produtorId,
         @NotBlank String nome,
-        Double areaHa,
+        @PositiveOrZero Double areaHa,
         @Valid CoordenadaDto centro,
         @Valid List<TalhaoPontoDto> pontos
 ) {

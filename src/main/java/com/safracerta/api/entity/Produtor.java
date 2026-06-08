@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "PRODUTOR")
@@ -41,4 +43,7 @@ public class Produtor {
     private String cidade;
     private String cep;
     private String uf;
+
+    @OneToMany(mappedBy = "produtor", fetch = FetchType.LAZY)
+    private List<Talhao> talhoes = new ArrayList<>();
 }

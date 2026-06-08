@@ -1,4 +1,5 @@
 package com.safracerta.api.entity;
+import com.safracerta.api.entity.embeddable.Coordenada;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,4 +36,6 @@ public class Talhao {
     @OrderBy("ordem ASC")
     private List<TalhaoPonto> pontos = new ArrayList<>();
 
+    @OneToMany(mappedBy = "talhao", fetch = FetchType.LAZY)
+    private List<SafraTalhao> safras = new ArrayList<>();
 }
