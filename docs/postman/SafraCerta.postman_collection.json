@@ -17,8 +17,8 @@
   ],
   "item": [
     {
-      "name": "🖥️ Consumo Front-end — Por Tela",
-      "description": "Endpoints organizados pelo ponto de vista do front-end (app mobile do produtor + dashboard web da cooperativa). Cada item representa uma chamada que uma tela específica faz. Os CRUDs completos ficam nas pastas individuais abaixo.",
+      "name": "📱 Consumo Mobile — Por Tela",
+      "description": "Endpoints organizados pelo ponto de vista do app mobile. Tanto a visão do produtor quanto a do operador da cooperativa são consumidas pelo mesmo app React Native. Cada item representa uma chamada que uma tela específica faz. Os CRUDs completos ficam nas pastas individuais abaixo.",
       "item": [
         {
           "name": "📱 App Mobile — Produtor",
@@ -266,8 +266,8 @@
           ]
         },
         {
-          "name": "🖥️ Dashboard Web — Cooperativa",
-          "description": "Telas do dashboard web consumidas pelo operador da cooperativa.",
+          "name": "📱 App Mobile — Cooperativa (Operador)",
+          "description": "Telas do app mobile consumidas pelo operador da cooperativa.",
           "item": [
             {
               "name": "[Painel] Visão geral da cooperativa",
