@@ -3,7 +3,12 @@ package com.safracerta.api.controller;
 import com.safracerta.api.dto.previsao.PrevisaoResponse;
 import com.safracerta.api.service.PrevisaoClimaticaService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,8 +25,11 @@ public class PrevisaoClimaticaController {
     }
 
     @GetMapping
-    @Operation(summary = "Lista o histórico de previsões de um talhão")
-    public List<PrevisaoResponse> listar(@RequestParam Long talhaoId) {
-        return service.listar(talhaoId).stream().map(PrevisaoResponse::from).toList();
+    @Operation(summary = "Lista o histórico de previsões de um talhão", responses = {
+            @ApiResponse(responseCode = "200", description = "Sucesso",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = PrevisaoResponse.class))))
+    })
+    public ResponseEntity<List<PrevisaoResponse>> listar(@RequestParam Long talhaoId) {
+        return ResponseEntity.ok(service.listar(talhaoId).stream().map(PrevisaoResponse::from).toList());
     }
 }

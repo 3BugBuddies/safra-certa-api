@@ -8,8 +8,13 @@ import com.safracerta.api.dto.cooperativa.CooperativaResponse;
 import com.safracerta.api.dto.cooperativa.PainelCooperativaResponse;
 import com.safracerta.api.dto.produtor.ProdutorCardResponse;
 import com.safracerta.api.entity.Cooperativa;
+import com.safracerta.api.handler.ErrorResponse;
 import com.safracerta.api.service.CooperativaService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.hateoas.CollectionModel;
@@ -42,22 +47,37 @@ public class CooperativaController {
     }
 
     @GetMapping
-    @Operation(summary = "Lista todas as cooperativas")
-    public CollectionModel<EntityModel<CooperativaResponse>> listar() {
+    @Operation(summary = "Lista todas as cooperativas", responses = {
+            @ApiResponse(responseCode = "200", description = "Sucesso",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = CooperativaResponse.class))))
+    })
+    public ResponseEntity<CollectionModel<EntityModel<CooperativaResponse>>> listar() {
         List<EntityModel<CooperativaResponse>> itens = service.listar().stream()
                 .map(assembler::toModel).toList();
-        return CollectionModel.of(itens,
-                linkTo(methodOn(CooperativaController.class).listar()).withSelfRel());
+        return ResponseEntity.ok(CollectionModel.of(itens,
+                linkTo(methodOn(CooperativaController.class).listar()).withSelfRel()));
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Busca uma cooperativa por id")
-    public EntityModel<CooperativaResponse> buscar(@PathVariable Long id) {
-        return assembler.toModel(service.buscar(id));
+    @Operation(summary = "Busca uma cooperativa por id", responses = {
+            @ApiResponse(responseCode = "200", description = "Sucesso",
+                    content = @Content(schema = @Schema(implementation = CooperativaResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Não encontrada",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<EntityModel<CooperativaResponse>> buscar(@PathVariable Long id) {
+        return ResponseEntity.ok(assembler.toModel(service.buscar(id)));
     }
 
     @PostMapping
-    @Operation(summary = "Cria uma cooperativa")
+    @Operation(summary = "Cria uma cooperativa", responses = {
+            @ApiResponse(responseCode = "201", description = "Criada com sucesso",
+                    content = @Content(schema = @Schema(implementation = CooperativaResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "409", description = "CNPJ já cadastrado",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     public ResponseEntity<EntityModel<CooperativaResponse>> criar(@Valid @RequestBody CooperativaRequest req) {
         Cooperativa criada = service.criar(req);
         EntityModel<CooperativaResponse> model = assembler.toModel(criada);
@@ -65,31 +85,52 @@ public class CooperativaController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Atualiza uma cooperativa")
-    public EntityModel<CooperativaResponse> atualizar(@PathVariable Long id,
-                                                      @Valid @RequestBody CooperativaRequest req) {
-        return assembler.toModel(service.atualizar(id, req));
+    @Operation(summary = "Atualiza uma cooperativa", responses = {
+            @ApiResponse(responseCode = "200", description = "Atualizada com sucesso",
+                    content = @Content(schema = @Schema(implementation = CooperativaResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Não encontrada",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<EntityModel<CooperativaResponse>> atualizar(@PathVariable Long id,
+                                                                       @Valid @RequestBody CooperativaRequest req) {
+        return ResponseEntity.ok(assembler.toModel(service.atualizar(id, req)));
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Remove uma cooperativa (bloqueada se houver produtores)")
+    @Operation(summary = "Remove uma cooperativa (bloqueada se houver produtores)", responses = {
+            @ApiResponse(responseCode = "204", description = "Removida com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Não encontrada",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         service.deletar(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/painel")
-    @Operation(summary = "Painel agregado da cooperativa (contadores + distribuição de risco por talhão)")
-    public EntityModel<PainelCooperativaResponse> painel(@PathVariable Long id) {
-        return painelAssembler.toModel(service.painel(id));
+    @Operation(summary = "Painel agregado da cooperativa (contadores + distribuição de risco por talhão)", responses = {
+            @ApiResponse(responseCode = "200", description = "Sucesso",
+                    content = @Content(schema = @Schema(implementation = PainelCooperativaResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Não encontrada",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<EntityModel<PainelCooperativaResponse>> painel(@PathVariable Long id) {
+        return ResponseEntity.ok(painelAssembler.toModel(service.painel(id)));
     }
 
     @GetMapping("/{id}/produtores")
-    @Operation(summary = "Cards de produtor com agregados (área, nº talhões, nº em risco, nível agregado)")
-    public CollectionModel<EntityModel<ProdutorCardResponse>> produtoresCards(@PathVariable Long id) {
+    @Operation(summary = "Cards de produtor com agregados (área, nº talhões, nº em risco, nível agregado)", responses = {
+            @ApiResponse(responseCode = "200", description = "Sucesso",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = ProdutorCardResponse.class)))),
+            @ApiResponse(responseCode = "404", description = "Não encontrada",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<CollectionModel<EntityModel<ProdutorCardResponse>>> produtoresCards(@PathVariable Long id) {
         List<EntityModel<ProdutorCardResponse>> itens = service.produtoresCards(id).stream()
                 .map(produtorCardAssembler::toModel).toList();
-        return CollectionModel.of(itens,
-                linkTo(methodOn(CooperativaController.class).produtoresCards(id)).withSelfRel());
+        return ResponseEntity.ok(CollectionModel.of(itens,
+                linkTo(methodOn(CooperativaController.class).produtoresCards(id)).withSelfRel()));
     }
 }
