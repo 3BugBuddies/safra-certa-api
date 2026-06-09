@@ -2,6 +2,7 @@ package com.safracerta.api.entity;
 import com.safracerta.api.entity.embeddable.Coordenada;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -21,13 +22,16 @@ public class Talhao {
     @Column(name = "ID_TALHAO")
     private Long id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_PRODUTOR", nullable = false)
     private Produtor produtor;
 
+    @NotBlank
     @Column(name = "NM_NOME", nullable = false)
     private String nome;
 
+    @PositiveOrZero
     @Column(name = "NR_AREA_HA")
     private Double areaHa;
 
@@ -38,6 +42,12 @@ public class Talhao {
     @OrderBy("ordem ASC")
     private List<TalhaoPonto> pontos = new ArrayList<>();
 
-    @OneToMany(mappedBy = "talhao", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "talhao", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<SafraTalhao> safras = new ArrayList<>();
+
+    @OneToMany(mappedBy = "talhao", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Dispositivo> dispositivos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "talhao", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<PrevisaoClimatica> previsoes = new ArrayList<>();
 }

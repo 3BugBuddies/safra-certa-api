@@ -1,6 +1,7 @@
 package com.safracerta.api.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -24,22 +25,28 @@ public abstract class RegistroClimatico {
     @Column(name = "ID_REGISTRO_CLIMATICO")
     private Long id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TALHAO", nullable = false)
     private Talhao talhao;
 
+    @NotNull
     @Column(name = "DT_DATA_HORA", nullable = false)
     private LocalDateTime dataHora;
 
+    @DecimalMin("-50.0") @DecimalMax("60.0")
     @Column(name = "NR_TEMPERATURA")
     private Double temperatura;
 
+    @DecimalMin("0.0") @DecimalMax("100.0")
     @Column(name = "NR_UMIDADE_AR")
     private Double umidadeAr;
 
+    @DecimalMin("0.0") @DecimalMax("100.0")
     @Column(name = "NR_UMIDADE_SOLO")
     private Double umidadeSolo;
 
+    @DecimalMin("0.0") @DecimalMax("1500.0")
     @Column(name = "NR_RADIACAO_SOLAR")
     private Double radiacaoSolar;
 }

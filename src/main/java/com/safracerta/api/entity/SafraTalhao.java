@@ -2,6 +2,7 @@ package com.safracerta.api.entity;
 
 import com.safracerta.api.entity.enums.StatusSafra;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -22,24 +23,28 @@ public class SafraTalhao {
     @Column(name = "ID_SAFRA_TALHAO")
     private Long id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TALHAO", nullable = false)
     private Talhao talhao;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_CULTURA", nullable = false)
     private Cultura cultura;
 
+    @NotNull
     @Column(name = "DT_PLANTIO", nullable = false)
     private LocalDate dataPlantio;
 
     @Column(name = "DT_PREVISTA_COLHEITA")
     private LocalDate dataPrevistaColheita;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "TP_STATUS_SAFRA", nullable = false)
     private StatusSafra statusSafra = StatusSafra.ATIVA;
 
-    @OneToMany(mappedBy = "safraTalhao", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "safraTalhao", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<AnaliseTalhao> analises = new ArrayList<>();
 }

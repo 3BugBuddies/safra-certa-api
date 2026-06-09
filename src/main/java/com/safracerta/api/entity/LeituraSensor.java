@@ -1,6 +1,7 @@
 package com.safracerta.api.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 /**
@@ -14,6 +15,7 @@ import lombok.*;
 @NoArgsConstructor
 public class LeituraSensor extends RegistroClimatico {
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_DISPOSITIVO", nullable = false)
     private Dispositivo dispositivo;

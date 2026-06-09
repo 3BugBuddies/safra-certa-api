@@ -1,7 +1,11 @@
 package com.safracerta.api.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Dispositivo físico (ESP32) instalado num talhão. Emissor das leituras
@@ -22,13 +26,19 @@ public class Dispositivo {
     @Column(name = "ID_DISPOSITIVO")
     private Long id;
 
+    @NotBlank
     @Column(name = "CD_DISPOSITIVO", nullable = false, unique = true)
     private String codigoDispositivo;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TALHAO", nullable = false)
     private Talhao talhao;
 
+    @NotNull
     @Column(name = "AT_ATIVO", nullable = false)
     private Boolean ativo;
+
+    @OneToMany(mappedBy = "dispositivo", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<LeituraSensor> leituras = new ArrayList<>();
 }

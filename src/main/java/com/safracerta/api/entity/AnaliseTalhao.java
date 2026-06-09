@@ -4,6 +4,7 @@ import com.safracerta.api.entity.embeddable.Medicao;
 
 import com.safracerta.api.entity.enums.NivelRisco;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -22,10 +23,12 @@ public class AnaliseTalhao {
     @Column(name = "ID_ANALISE_TALHAO")
     private Long id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_SAFRA_TALHAO", nullable = false)
     private SafraTalhao safraTalhao;
 
+    @NotNull
     @Column(name = "DT_DATA_HORA_ANALISE", nullable = false)
     private LocalDateTime dataHoraAnalise;
 
@@ -44,6 +47,7 @@ public class AnaliseTalhao {
     })
     private Previsao previsaoPrevista;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "TP_NIVEL_RISCO", nullable = false)
     private NivelRisco nivelRisco;
