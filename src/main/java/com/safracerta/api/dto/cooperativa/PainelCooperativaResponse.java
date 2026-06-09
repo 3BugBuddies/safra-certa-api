@@ -1,9 +1,6 @@
 package com.safracerta.api.dto.cooperativa;
 
-/**
- * Painel agregado da cooperativa (tela da cooperativa no app).
- * Devolve métricas de domínio cruas; o front rotula/agrupa (ex.: "em risco" = alerta + critico).
- */
+/** Métricas cruas da cooperativa; "em risco" (alerta + critico) é calculado no front. */
 public record PainelCooperativaResponse(
         Long cooperativaId,
         String nome,

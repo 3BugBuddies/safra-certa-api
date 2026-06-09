@@ -12,6 +12,5 @@ public interface SafraTalhaoRepository extends JpaRepository<SafraTalhao, Long> 
     boolean existsByCulturaId(Long culturaId);
     boolean existsByTalhaoIdAndStatusSafra(Long talhaoId, StatusSafra statusSafra);
 
-    /** Safra ativa de um talhão (usada pelo Motor de Risco). */
     Optional<SafraTalhao> findFirstByTalhaoIdAndStatusSafra(Long talhaoId, StatusSafra statusSafra);
 }

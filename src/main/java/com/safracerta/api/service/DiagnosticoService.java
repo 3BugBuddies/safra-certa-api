@@ -11,12 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-/**
- * Gera diagnóstico e recomendação textuais para uma análise, via Gemini (Spring AI).
- * A IA apenas descreve — o nível de risco já vem decidido pelo motor.
- * Tolerante a falhas: qualquer erro/resposta vazia retorna {@code Optional.empty()}
- * e a análise é persistida sem os textos (padrão do RedatorService do petbuddies-ai).
- */
+/** Tolerante a falhas: qualquer erro retorna {@code Optional.empty()} e a análise segue sem texto. */
 @Service
 public class DiagnosticoService {
 

@@ -5,10 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-/**
- * Resposta crua da API Open-Meteo (formato externo). Convertida em
- * {@link com.safracerta.api.entity.PrevisaoClimatica} pelo {@link OpenMeteoMapper}.
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record OpenMeteoResponse(Daily daily, Hourly hourly) {
 

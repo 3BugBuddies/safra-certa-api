@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
 
-/** Tradução central de exceções para o corpo de erro padronizado. */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

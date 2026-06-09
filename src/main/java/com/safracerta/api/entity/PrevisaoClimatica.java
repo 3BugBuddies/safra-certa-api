@@ -5,11 +5,6 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-/**
- * Registro climático previsto por fonte externa (Open-Meteo).
- * Herda talhão, dataHora (= momento da consulta) e grandezas de
- * {@link RegistroClimatico}; adiciona o horizonte previsto e a chuva.
- */
 @Entity
 @Table(name = "T_SC_PREVISAO_CLIMATICA")
 @Getter

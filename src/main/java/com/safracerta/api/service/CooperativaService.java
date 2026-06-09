@@ -62,9 +62,6 @@ public class CooperativaService {
         repository.delete(buscar(id));
     }
 
-    // ── Visões de leitura (telas da cooperativa) ─────────────────────────────
-
-    /** Painel agregado: contadores + distribuição de TALHÕES por nível (última análise de cada). */
     @Transactional(readOnly = true)
     public PainelCooperativaResponse painel(Long id) {
         Cooperativa coop = buscar(id);
@@ -92,7 +89,6 @@ public class CooperativaService {
                 new DistribuicaoRisco(saudavel, atencao, alerta, critico));
     }
 
-    /** Cards de produtor com agregados (lista da cooperativa). */
     @Transactional(readOnly = true)
     public List<ProdutorCardResponse> produtoresCards(Long id) {
         Cooperativa coop = buscar(id);

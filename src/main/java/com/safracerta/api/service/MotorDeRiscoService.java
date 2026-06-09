@@ -25,15 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Motor de Risco determinístico. Roda na ingestão de leitura: se o talhão tem
- * safra ATIVA, conta os fatores climáticos que cruzaram os limites da cultura e
- * registra uma {@link AnaliseTalhao} (snapshot da medição + última previsão).
- *
- * Nível por contagem de fatores: 0=SAUDAVEL, 1=ATENCAO, 2=ALERTA, 3+=CRITICO.
- * Tolera limites/dados/previsão ausentes (fator só conta se ambos existem).
- * Diagnóstico/recomendação são preenchidos pela IA (opcional, com fallback).
- */
+/** 0 fatores=SAUDAVEL · 1=ATENCAO · 2=ALERTA · 3+=CRITICO; fator só conta se limite E dado existem. */
 @Service
 public class MotorDeRiscoService {
 

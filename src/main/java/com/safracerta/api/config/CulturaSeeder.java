@@ -10,24 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-/**
- * Seed automático do catálogo de {@link Cultura} no boot.
- * Idempotente (só semeia se a tabela estiver vazia) — convive com {@code ddl-auto: create}.
- *
- * <p>Catálogo embasado em fontes agronômicas (Embrapa Agência de Informação Tecnológica,
- * Embrapa Hortaliças/Soja/Milho/Trigo/Batata/Mandioca; faixas cardinais complementadas por
- * FAO EcoCrop). Detalhamento e fonte por cultura: {@code .claude/docs/analysis/seed-culturas-embasamento.md}.
- *
- * <p>Semântica dos limites (consumidos pelo Motor de Risco):
- * <ul>
- *   <li>{@code umidadeSoloCritica} (%): umidade do solo abaixo da qual há estresse hídrico (sensor).</li>
- *   <li>{@code temperaturaMinCritica} (°C): mínima prevista abaixo dela → risco de frio/geada.</li>
- *   <li>{@code temperaturaMaxCritica} (°C): máxima prevista acima dela → estresse por calor.</li>
- *   <li>{@code chuvaMinima} (mm): chuva diária prevista abaixo dela → déficit hídrico.</li>
- *   <li>{@code diasAteColheita}: ciclo médio plantio→colheita.</li>
- * </ul>
- * Valores de referência para a demo — não substituem recomendação agronômica local.
- */
+/** Seed idempotente do catálogo de culturas (só roda se a tabela estiver vazia). */
 @Component
 public class CulturaSeeder implements ApplicationRunner {
 

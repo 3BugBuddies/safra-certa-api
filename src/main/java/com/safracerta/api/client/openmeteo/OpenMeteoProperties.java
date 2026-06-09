@@ -5,7 +5,6 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-/** Configuração da integração Open-Meteo (base URL + throttle da coleta de previsão). */
 @Component
 @ConfigurationProperties(prefix = "safracerta.open-meteo")
 @Getter

@@ -9,11 +9,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
-/**
- * Payload do ESP32. O horário é carimbado pelo servidor na recepção — o relógio
- * do sensor não é fonte de verdade. As faixas físicas plausíveis são validadas
- * por Bean Validation (rejeição → 400 no GlobalExceptionHandler), sem checagem manual.
- */
+/** dataHora é carimbado pelo servidor em {@code toEntity()} — o relógio do sensor não é fonte de verdade. */
 public record LeituraRequest(
         @NotBlank String codigoDispositivo,
         @NotNull @DecimalMin("-50.0") @DecimalMax("60.0") Double temperatura,

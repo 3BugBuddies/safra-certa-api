@@ -9,15 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Traduz a {@link OpenMeteoResponse} crua para a entidade {@link PrevisaoClimatica}
- * (um ponto D+1). Temperatura (média/min/máx) e chuva (soma) vêm do agregado
- * diário; umidade do ar/solo e radiação vêm do horário, média sobre as 24h de
- * D+1 (sem agregação diária na API). Unidades alinhadas ao sensor: temperatura
- * °C, umidade do ar %, radiação W/m². A umidade do solo da Open-Meteo vem em
- * m³/m³ (0–1) e é convertida para % (×100) para bater com a leitura do sensor e
- * o limiar {@code Cultura.umidadeSoloCritica}. Ver Decisão 4 do PRD 03.
- */
+/** temperatura/chuva do daily; umidadeAr/solo/radiação do hourly (média D+1). */
 @Component
 public class OpenMeteoMapper {
 
@@ -58,7 +50,6 @@ public class OpenMeteoMapper {
         return fracao == null ? null : fracao * 100;
     }
 
-    /** Média dos valores horários cujas timestamps (em {@code tempos}) caem no dia {@code dia}. */
     private static Double mediaDoDia(List<String> tempos, List<Double> valores, LocalDate dia) {
         if (tempos == null || valores == null) return null;
         String prefixo = dia.toString(); // "yyyy-MM-dd" — timestamps do Open-Meteo começam assim

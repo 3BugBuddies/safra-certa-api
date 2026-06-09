@@ -7,11 +7,7 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Dispositivo físico (ESP32) instalado num talhão. Emissor das leituras
- * de sensor. A regra "um dispositivo por talhão" é de negócio (aplicação),
- * não restrição de modelo. Ver PRD de ingestão/dispositivos.
- */
+/** Regra "um dispositivo por talhão" é de negócio (aplicação), não constraint de modelo. */
 @Entity
 @Table(name = "T_SC_DISPOSITIVO")
 @Getter

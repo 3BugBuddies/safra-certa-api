@@ -8,7 +8,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/** Valida que os pontos do polígono não repetem o valor de {@code ordem}. */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = OrdensDistintasValidator.class)

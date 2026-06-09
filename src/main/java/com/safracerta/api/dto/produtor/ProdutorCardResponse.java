@@ -2,10 +2,7 @@ package com.safracerta.api.dto.produtor;
 
 import com.safracerta.api.entity.enums.NivelRisco;
 
-/**
- * Card de produtor com agregados (lista de produtores da cooperativa).
- * {@code nivelAgregado} = pior nível entre os talhões do produtor (Decisão 5); o front rotula.
- */
+/** {@code nivelAgregado} = pior nível entre os talhões do produtor; rótulo/cor fica no front. */
 public record ProdutorCardResponse(
         Long id,
         String nome,

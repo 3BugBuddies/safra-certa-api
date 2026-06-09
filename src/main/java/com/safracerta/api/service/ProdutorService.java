@@ -66,16 +66,12 @@ public class ProdutorService {
         repository.delete(buscar(id));
     }
 
-    // ── Visões de leitura ────────────────────────────────────────────────────
-
-    /** Situação de cada talhão do produtor (mapa de talhões). */
     @Transactional(readOnly = true)
     public List<TalhaoSituacaoResponse> talhoesSituacao(Long id) {
         Produtor p = buscar(id);
         return p.getTalhoes().stream().map(talhaoService::montarSituacao).toList();
     }
 
-    /** Card agregado de um produtor: área total, nº talhões, nº em risco e pior nível. */
     public ProdutorCardResponse cardDe(Produtor p) {
         double areaTotal = 0;
         long emRisco = 0;

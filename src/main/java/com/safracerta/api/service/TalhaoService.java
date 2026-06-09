@@ -68,14 +68,11 @@ public class TalhaoService {
         repository.delete(buscar(id));
     }
 
-    // ── Visões de leitura (situação do talhão) ───────────────────────────────
-
     @Transactional(readOnly = true)
     public TalhaoSituacaoResponse situacao(Long id) {
         return montarSituacao(buscar(id));
     }
 
-    /** Monta a situação de um talhão: cultura da safra ATIVA + última medição/nível. */
     public TalhaoSituacaoResponse montarSituacao(Talhao t) {
         String culturaNome = safraTalhaoRepository
                 .findFirstByTalhaoIdAndStatusSafra(t.getId(), StatusSafra.ATIVA)

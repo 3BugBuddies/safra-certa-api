@@ -6,11 +6,6 @@ import org.springframework.web.client.RestClient;
 
 import java.util.Optional;
 
-/**
- * Cliente da API de previsão Open-Meteo (gratuita, sem chave). Responsabilidade
- * única: montar a requisição, chamar o HTTP e desserializar a resposta crua.
- * A agregação D+1 e o mapeamento para a entidade ficam no {@link OpenMeteoMapper}.
- */
 @Component
 public class OpenMeteoClient {
 

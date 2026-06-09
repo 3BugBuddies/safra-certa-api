@@ -6,12 +6,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-/**
- * Superclasse abstrata dos registros climáticos de um talhão num instante.
- * Estratégia TABLE_PER_CLASS: cada subclasse concreta tem sua própria tabela
- * (sem tabela base no banco). Id único global via sequence compartilhada.
- * Ver ADR 01 (.claude/docs/decisions/01-heranca-registro-climatico.md).
- */
+/** TABLE_PER_CLASS: sem tabela base no banco; id global via sequence compartilhada (ADR 01). */
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Getter

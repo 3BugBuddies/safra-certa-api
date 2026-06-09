@@ -5,11 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-/**
- * CORS básico para o deploy provisório — libera o front a consumir a API.
- * Origens configuráveis via {@code safracerta.cors.allowed-origins} (default {@code *}).
- * Sem {@code allowCredentials} no provisório, para poder usar origem curinga.
- */
+/** Origens configuráveis via {@code safracerta.cors.allowed-origins} (default {@code *}). */
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 

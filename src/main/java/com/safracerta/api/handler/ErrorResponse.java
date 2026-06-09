@@ -3,10 +3,7 @@ package com.safracerta.api.handler;
 import java.time.Instant;
 import java.util.List;
 
-/**
- * Corpo de erro padronizado da API. {@code fieldErrors} só é preenchido
- * em falhas de validação (400).
- */
+/** {@code fieldErrors} só é preenchido em falhas de validação (400). */
 public record ErrorResponse(
         Instant timestamp,
         int status,

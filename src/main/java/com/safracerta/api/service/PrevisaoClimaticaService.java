@@ -38,11 +38,7 @@ public class PrevisaoClimaticaService {
         return repository.findByTalhaoIdOrderByDataHoraDesc(talhaoId);
     }
 
-    /**
-     * Coleta a previsão do talhão via Open-Meteo apenas se a última for mais
-     * antiga que o throttle. Não bloqueante: qualquer falha (rede, centro nulo)
-     * é logada e a ingestão segue (degrada silenciosamente).
-     */
+    /** Não bloqueante: falha de rede ou centro nulo loga e degrada sem interromper a ingestão. */
     public void atualizarComThrottle(Talhao talhao) {
         try {
             if (talhao.getCentro() == null
