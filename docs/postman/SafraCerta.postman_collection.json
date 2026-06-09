@@ -6,359 +6,40 @@
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "baseUrl",       "value": "http://localhost:8080" },
-    { "key": "cooperativaId", "value": "1" },
-    { "key": "produtorId",    "value": "1" },
-    { "key": "culturaId",     "value": "1" },
-    { "key": "talhaoId",      "value": "1" },
-    { "key": "safraId",       "value": "1" },
-    { "key": "dispositivoId", "value": "1" },
-    { "key": "analiseId",     "value": "1" }
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "cooperativaId",
+      "value": "1"
+    },
+    {
+      "key": "produtorId",
+      "value": "1"
+    },
+    {
+      "key": "culturaId",
+      "value": "1"
+    },
+    {
+      "key": "talhaoId",
+      "value": "1"
+    },
+    {
+      "key": "safraId",
+      "value": "1"
+    },
+    {
+      "key": "dispositivoId",
+      "value": "1"
+    },
+    {
+      "key": "analiseId",
+      "value": "1"
+    }
   ],
   "item": [
-    {
-      "name": "📱 Consumo Mobile — Por Tela",
-      "description": "Endpoints organizados pelo ponto de vista do app mobile. Tanto a visão do produtor quanto a do operador da cooperativa são consumidas pelo mesmo app React Native. Cada item representa uma chamada que uma tela específica faz. Os CRUDs completos ficam nas pastas individuais abaixo.",
-      "item": [
-        {
-          "name": "📱 App Mobile — Produtor",
-          "description": "Telas do aplicativo React Native consumidas pelo produtor.",
-          "item": [
-            {
-              "name": "[Home] Talhões do produtor (mapa + situação)",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/produtor/{{produtorId}}/talhoes",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["produtor", "{{produtorId}}", "talhoes"]
-                },
-                "description": "Tela principal do produtor: lista de talhões com nome, área, cultura da safra ATIVA, última medição (umidade/temperatura), nível de risco atual e polígono para mapa. Campos nulos = sem dado (talhão sem safra ativa ou sem leitura).\n\nResposta relevante:\n- talhaoId, nome, areaHa, cultura\n- ultimaMedicao: temperatura, umidadeSolo\n- nivelRisco: SAUDAVEL | ATENCAO | ALERTA | CRITICO\n- pontos: [ {latitude, longitude} ] (polígono)"
-              },
-              "response": []
-            },
-            {
-              "name": "[Talhão] Situação atual do talhão",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/talhao/{{talhaoId}}/situacao",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["talhao", "{{talhaoId}}", "situacao"]
-                },
-                "description": "Tela de detalhe de um talhão: nome, área, centro, cultura da safra ATIVA, última medição completa, nível de risco e polígono. Mesmo payload de /produtor/{id}/talhoes mas para um único talhão."
-              },
-              "response": []
-            },
-            {
-              "name": "[Alerta] Última análise do talhão",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/analise/ultima?talhaoId={{talhaoId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["analise", "ultima"],
-                  "query": [{ "key": "talhaoId", "value": "{{talhaoId}}", "description": "obrigatório" }]
-                },
-                "description": "Tela de alerta/diagnóstico: análise mais recente do talhão com nivelRisco, diagnostico (texto IA) e recomendacao (texto IA). 404 se ainda não houver análise.\n\nResposta relevante:\n- dataHoraAnalise\n- nivelRisco\n- diagnostico (texto gerado pelo Gemini)\n- recomendacao (texto gerado pelo Gemini)\n- medicaoAtual: snapshot das grandezas no momento\n- previsaoPrevista: snapshot da previsão D+1"
-              },
-              "response": []
-            },
-            {
-              "name": "[Histórico] Análises do talhão",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/analise?talhaoId={{talhaoId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["analise"],
-                  "query": [{ "key": "talhaoId", "value": "{{talhaoId}}", "description": "obrigatório" }]
-                },
-                "description": "Tela de histórico: todas as análises de risco do talhão, ordenadas por data decrescente. Permite visualizar evolução do nível de risco ao longo do tempo."
-              },
-              "response": []
-            },
-            {
-              "name": "[Histórico] Detalhe de uma análise",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/analise/{{analiseId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["analise", "{{analiseId}}"]
-                },
-                "description": "Detalhe completo de uma análise específica (ao clicar em um item do histórico): medicaoAtual, previsaoPrevista, nivelRisco, diagnostico e recomendacao."
-              },
-              "response": []
-            },
-            {
-              "name": "[Catálogo] Culturas disponíveis",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/cultura",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["cultura"]
-                },
-                "description": "Lista de culturas para seleção ao cadastrar uma nova safra. Retorna 14 culturas pré-carregadas no seed + qualquer cultura criada manualmente."
-              },
-              "response": []
-            }
-          ]
-        },
-        {
-          "name": "📱 App Mobile — CRUD (requisito disciplina)",
-          "description": "Operações de escrita do app mobile. Necessárias para atender o requisito de CRUD completo da disciplina Mobile Application Development.",
-          "item": [
-            {
-              "name": "[CRUD] Criar produtor",
-              "request": {
-                "method": "POST",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "url": {
-                  "raw": "{{baseUrl}}/produtor",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["produtor"]
-                },
-                "description": "Cadastro de novo produtor vinculado à cooperativa.",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"cooperativaId\": 1,\n  \"nome\": \"João Silva\",\n  \"telefone\": \"34999991111\",\n  \"cpf\": \"12345678900\",\n  \"dataNascimento\": \"1980-05-12\",\n  \"nomePropriedade\": \"Fazenda Boa Esperança\",\n  \"caf\": \"CAF-001\",\n  \"logradouro\": \"Rod. BR-050\",\n  \"numero\": \"km 12\",\n  \"bairro\": \"Zona Rural\",\n  \"cidade\": \"Uberaba\",\n  \"cep\": \"38000000\",\n  \"uf\": \"MG\"\n}",
-                  "options": { "raw": { "language": "json" } }
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "[CRUD] Atualizar produtor",
-              "request": {
-                "method": "PUT",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "url": {
-                  "raw": "{{baseUrl}}/produtor/{{produtorId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["produtor", "{{produtorId}}"]
-                },
-                "description": "Edição dos dados do produtor (perfil/propriedade).",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"cooperativaId\": 1,\n  \"nome\": \"João Silva\",\n  \"telefone\": \"34999991111\",\n  \"cpf\": \"12345678900\",\n  \"dataNascimento\": \"1980-05-12\",\n  \"nomePropriedade\": \"Fazenda Boa Esperança\",\n  \"caf\": \"CAF-001\",\n  \"logradouro\": \"Rod. BR-050\",\n  \"numero\": \"km 12\",\n  \"bairro\": \"Zona Rural\",\n  \"cidade\": \"Uberaba\",\n  \"cep\": \"38000000\",\n  \"uf\": \"MG\"\n}",
-                  "options": { "raw": { "language": "json" } }
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "[CRUD] Criar talhão",
-              "request": {
-                "method": "POST",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "url": {
-                  "raw": "{{baseUrl}}/talhao",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["talhao"]
-                },
-                "description": "Cadastro de novo talhão com polígono e centro (necessário para coleta de previsão). A ordem dos pontos deve ser única.",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"produtorId\": 1,\n  \"nome\": \"Talhão Norte\",\n  \"areaHa\": 45.0,\n  \"centro\": {\n    \"latitude\": -19.75,\n    \"longitude\": -47.93\n  },\n  \"pontos\": [\n    { \"ordem\": 0, \"latitude\": -19.749, \"longitude\": -47.931 },\n    { \"ordem\": 1, \"latitude\": -19.751, \"longitude\": -47.929 },\n    { \"ordem\": 2, \"latitude\": -19.752, \"longitude\": -47.933 }\n  ]\n}",
-                  "options": { "raw": { "language": "json" } }
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "[CRUD] Atualizar talhão",
-              "request": {
-                "method": "PUT",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "url": {
-                  "raw": "{{baseUrl}}/talhao/{{talhaoId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["talhao", "{{talhaoId}}"]
-                },
-                "description": "Atualiza talhão. O polígono é substituído inteiro (pontos antigos removidos via orphanRemoval).",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"produtorId\": 1,\n  \"nome\": \"Talhão Norte (atualizado)\",\n  \"areaHa\": 50.0,\n  \"centro\": {\n    \"latitude\": -19.75,\n    \"longitude\": -47.93\n  },\n  \"pontos\": [\n    { \"ordem\": 0, \"latitude\": -19.749, \"longitude\": -47.931 },\n    { \"ordem\": 1, \"latitude\": -19.751, \"longitude\": -47.929 },\n    { \"ordem\": 2, \"latitude\": -19.752, \"longitude\": -47.933 }\n  ]\n}",
-                  "options": { "raw": { "language": "json" } }
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "[CRUD] Remover talhão",
-              "request": {
-                "method": "DELETE",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/talhao/{{talhaoId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["talhao", "{{talhaoId}}"]
-                },
-                "description": "Remove o talhão. 409 se houver safras vinculadas."
-              },
-              "response": []
-            },
-            {
-              "name": "[CRUD] Criar safra",
-              "request": {
-                "method": "POST",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "url": {
-                  "raw": "{{baseUrl}}/safra",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["safra"]
-                },
-                "description": "Inicia uma safra no talhão. Rejeita 2ª safra ATIVA no mesmo talhão (409).",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"talhaoId\": 1,\n  \"culturaId\": 1,\n  \"dataPlantio\": \"2026-01-15\",\n  \"dataPrevistaColheita\": \"2026-06-24\",\n  \"statusSafra\": \"ATIVA\"\n}",
-                  "options": { "raw": { "language": "json" } }
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "[CRUD] Encerrar safra (status)",
-              "request": {
-                "method": "PUT",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "url": {
-                  "raw": "{{baseUrl}}/safra/{{safraId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["safra", "{{safraId}}"]
-                },
-                "description": "Encerra a safra alterando o status para COLHIDA ou PERDIDA. Após isso o motor de risco não gera mais análises para esse talhão.",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"talhaoId\": 1,\n  \"culturaId\": 1,\n  \"dataPlantio\": \"2026-01-15\",\n  \"dataPrevistaColheita\": \"2026-06-24\",\n  \"statusSafra\": \"COLHIDA\"\n}",
-                  "options": { "raw": { "language": "json" } }
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "[CRUD] Enviar leitura ESP32",
-              "request": {
-                "method": "POST",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "url": {
-                  "raw": "{{baseUrl}}/leitura",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["leitura"]
-                },
-                "description": "Ingestão de leitura do sensor. Ao salvar: coleta previsão Open-Meteo (throttle 1h) e roda o motor de risco (se houver safra ATIVA). Gera AnaliseTalhao com nivelRisco + texto IA.\n\nFaixas físicas (400 se fora): temperatura −50..60, umidadeAr 0..100, umidadeSolo 0..100, radiacaoSolar 0..1500.",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"codigoDispositivo\": \"ESP32-001\",\n  \"dataHora\": \"2026-06-08T09:41:00\",\n  \"temperatura\": 26.0,\n  \"umidadeAr\": 72.0,\n  \"umidadeSolo\": 31.0,\n  \"radiacaoSolar\": 456.0\n}",
-                  "options": { "raw": { "language": "json" } }
-                }
-              },
-              "response": []
-            }
-          ]
-        },
-        {
-          "name": "📱 App Mobile — Cooperativa (Operador)",
-          "description": "Telas do app mobile consumidas pelo operador da cooperativa.",
-          "item": [
-            {
-              "name": "[Painel] Visão geral da cooperativa",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/cooperativa/{{cooperativaId}}/painel",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["cooperativa", "{{cooperativaId}}", "painel"]
-                },
-                "description": "Tela inicial do dashboard: contadores gerais e distribuição de talhões por nível de risco.\n\nResposta relevante:\n- qtdProdutores\n- totalHectares\n- distribuicaoRisco: { saudavel, atencao, alerta, critico } (contagem de talhões)\n\n'Em risco' = alerta + critico, derivado no front."
-              },
-              "response": []
-            },
-            {
-              "name": "[Lista] Cards de produtores",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/cooperativa/{{cooperativaId}}/produtores",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["cooperativa", "{{cooperativaId}}", "produtores"]
-                },
-                "description": "Tela de lista de produtores: cada card com área total, qtd de talhões, qtd em risco e nível agregado (pior nível entre os talhões do produtor). Link HATEOAS para /produtor/{id}/talhoes."
-              },
-              "response": []
-            },
-            {
-              "name": "[Produtor] Talhões do produtor (situação)",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/produtor/{{produtorId}}/talhoes",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["produtor", "{{produtorId}}", "talhoes"]
-                },
-                "description": "Ao clicar em um produtor: lista de talhões com situação completa (cultura, medição, nível de risco, polígono). Serve tanto o dashboard web quanto o app mobile."
-              },
-              "response": []
-            },
-            {
-              "name": "[Talhão] Situação atual do talhão",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/talhao/{{talhaoId}}/situacao",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["talhao", "{{talhaoId}}", "situacao"]
-                },
-                "description": "Ao clicar em um talhão: situação completa (cultura, medição, nível, polígono)."
-              },
-              "response": []
-            },
-            {
-              "name": "[Talhão] Última análise",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/analise/ultima?talhaoId={{talhaoId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["analise", "ultima"],
-                  "query": [{ "key": "talhaoId", "value": "{{talhaoId}}", "description": "obrigatório" }]
-                },
-                "description": "Painel de risco de um talhão: análise mais recente com nivelRisco, diagnostico e recomendacao (texto IA)."
-              },
-              "response": []
-            },
-            {
-              "name": "[Talhão] Histórico de análises",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/analise?talhaoId={{talhaoId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["analise"],
-                  "query": [{ "key": "talhaoId", "value": "{{talhaoId}}", "description": "obrigatório" }]
-                },
-                "description": "Histórico completo de análises para gráfico de evolução do nível de risco."
-              },
-              "response": []
-            }
-          ]
-        }
-      ]
-    },
     {
       "name": "Cooperativas",
       "description": "CRUD de cooperativa (cnpj único; delete em cascata: produtores → talhões → análises/leituras) + visões agregadas.\n\nTabela: T_SC_COOPERATIVA — Sequence: SEQ_T_SC_COOPERATIVA.",
@@ -370,8 +51,12 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/cooperativa",
-              "host": ["{{baseUrl}}"],
-              "path": ["cooperativa"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cooperativa"
+              ]
             },
             "description": "Lista todas as cooperativas. Retorna CollectionModel<EntityModel<CooperativaResponse>> (HATEOAS)."
           },
@@ -384,8 +69,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/cooperativa/{{cooperativaId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["cooperativa", "{{cooperativaId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cooperativa",
+                "{{cooperativaId}}"
+              ]
             },
             "description": "Busca por id. 404 se não existir."
           },
@@ -395,17 +85,30 @@
           "name": "Criar cooperativa",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/cooperativa",
-              "host": ["{{baseUrl}}"],
-              "path": ["cooperativa"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cooperativa"
+              ]
             },
             "description": "Cria cooperativa. Validações: nome obrigatório; cnpj 14 dígitos e único (409); telefone 10–11 dígitos; cep 8 dígitos; uf 2 letras maiúsculas; email válido.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nome\": \"Cooperativa Boa Esperança\",\n  \"cnpj\": \"12345678000190\",\n  \"telefone\": \"3433334444\",\n  \"email\": \"contato@coop.com.br\",\n  \"logradouro\": \"Rod. BR-050\",\n  \"numero\": \"km 12\",\n  \"bairro\": \"Zona Rural\",\n  \"cidade\": \"Uberaba\",\n  \"cep\": \"38000000\",\n  \"uf\": \"MG\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
           "response": []
@@ -414,17 +117,31 @@
           "name": "Atualizar cooperativa",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/cooperativa/{{cooperativaId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["cooperativa", "{{cooperativaId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cooperativa",
+                "{{cooperativaId}}"
+              ]
             },
             "description": "Atualiza por id (mesmo contrato do POST).",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nome\": \"Cooperativa Boa Esperança\",\n  \"cnpj\": \"12345678000190\",\n  \"telefone\": \"3433334444\",\n  \"email\": \"contato@coop.com.br\",\n  \"logradouro\": \"Rod. BR-050\",\n  \"numero\": \"km 12\",\n  \"bairro\": \"Zona Rural\",\n  \"cidade\": \"Uberaba\",\n  \"cep\": \"38000000\",\n  \"uf\": \"MG\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
           "response": []
@@ -436,8 +153,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/cooperativa/{{cooperativaId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["cooperativa", "{{cooperativaId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cooperativa",
+                "{{cooperativaId}}"
+              ]
             },
             "description": "Remove em cascata (produtores → talhões → análises/leituras/dispositivos/safras)."
           },
@@ -450,8 +172,14 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/cooperativa/{{cooperativaId}}/painel",
-              "host": ["{{baseUrl}}"],
-              "path": ["cooperativa", "{{cooperativaId}}", "painel"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cooperativa",
+                "{{cooperativaId}}",
+                "painel"
+              ]
             },
             "description": "Painel agregado: qtdProdutores, totalHectares e distribuição de talhões por nível {saudavel, atencao, alerta, critico} (última análise de cada)."
           },
@@ -464,8 +192,14 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/cooperativa/{{cooperativaId}}/produtores",
-              "host": ["{{baseUrl}}"],
-              "path": ["cooperativa", "{{cooperativaId}}", "produtores"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cooperativa",
+                "{{cooperativaId}}",
+                "produtores"
+              ]
             },
             "description": "Lista de produtores com agregados: areaTotalHa, qtdTalhoes, qtdTalhoesEmRisco e nivelAgregado (pior nível entre os talhões)."
           },
@@ -484,9 +218,19 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/produtor?cooperativaId={{cooperativaId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["produtor"],
-              "query": [{ "key": "cooperativaId", "value": "{{cooperativaId}}", "description": "opcional — filtra por cooperativa" }]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "produtor"
+              ],
+              "query": [
+                {
+                  "key": "cooperativaId",
+                  "value": "{{cooperativaId}}",
+                  "description": "opcional — filtra por cooperativa"
+                }
+              ]
             },
             "description": "Lista produtores; filtro opcional ?cooperativaId=."
           },
@@ -499,8 +243,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/produtor/{{produtorId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["produtor", "{{produtorId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "produtor",
+                "{{produtorId}}"
+              ]
             },
             "description": "Busca por id. 404 se não existir."
           },
@@ -510,17 +259,30 @@
           "name": "Criar produtor",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/produtor",
-              "host": ["{{baseUrl}}"],
-              "path": ["produtor"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "produtor"
+              ]
             },
             "description": "Cria produtor. cooperativaId obrigatório (404 se cooperativa não existir); cpf 11 dígitos e único (409); numero é String (aceita 'S/N').",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"cooperativaId\": 1,\n  \"nome\": \"João Silva\",\n  \"telefone\": \"34999991111\",\n  \"cpf\": \"12345678900\",\n  \"dataNascimento\": \"1980-05-12\",\n  \"nomePropriedade\": \"Fazenda Boa Esperança\",\n  \"caf\": \"CAF-001\",\n  \"logradouro\": \"Rod. BR-050\",\n  \"numero\": \"km 12\",\n  \"bairro\": \"Zona Rural\",\n  \"cidade\": \"Uberaba\",\n  \"cep\": \"38000000\",\n  \"uf\": \"MG\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
           "response": []
@@ -529,17 +291,31 @@
           "name": "Atualizar produtor",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/produtor/{{produtorId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["produtor", "{{produtorId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "produtor",
+                "{{produtorId}}"
+              ]
             },
             "description": "Atualiza por id.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"cooperativaId\": 1,\n  \"nome\": \"João Silva\",\n  \"telefone\": \"34999991111\",\n  \"cpf\": \"12345678900\",\n  \"dataNascimento\": \"1980-05-12\",\n  \"nomePropriedade\": \"Fazenda Boa Esperança\",\n  \"caf\": \"CAF-001\",\n  \"logradouro\": \"Rod. BR-050\",\n  \"numero\": \"km 12\",\n  \"bairro\": \"Zona Rural\",\n  \"cidade\": \"Uberaba\",\n  \"cep\": \"38000000\",\n  \"uf\": \"MG\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
           "response": []
@@ -551,8 +327,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/produtor/{{produtorId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["produtor", "{{produtorId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "produtor",
+                "{{produtorId}}"
+              ]
             },
             "description": "Remove em cascata (talhões e tudo abaixo)."
           },
@@ -565,8 +346,14 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/produtor/{{produtorId}}/talhoes",
-              "host": ["{{baseUrl}}"],
-              "path": ["produtor", "{{produtorId}}", "talhoes"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "produtor",
+                "{{produtorId}}",
+                "talhoes"
+              ]
             },
             "description": "Mapa de talhões: por talhão, nome, área, cultura da safra ATIVA, umidade/temperatura da última medição, nível de risco e polígono."
           },
@@ -585,8 +372,12 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/cultura",
-              "host": ["{{baseUrl}}"],
-              "path": ["cultura"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cultura"
+              ]
             },
             "description": "Lista o catálogo completo."
           },
@@ -599,8 +390,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/cultura/{{culturaId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["cultura", "{{culturaId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cultura",
+                "{{culturaId}}"
+              ]
             },
             "description": "Busca por id."
           },
@@ -610,17 +406,30 @@
           "name": "Criar cultura",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/cultura",
-              "host": ["{{baseUrl}}"],
-              "path": ["cultura"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cultura"
+              ]
             },
             "description": "Cria cultura. nome único (409); diasAteColheita positivo; umidadeSoloCritica 0–100; temperaturaMinCritica pode ser negativa (geada); chuvaMinima >= 0.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nome\": \"Soja\",\n  \"diasAteColheita\": 160,\n  \"umidadeSoloCritica\": 30.0,\n  \"temperaturaMinCritica\": 10.0,\n  \"temperaturaMaxCritica\": 40.0,\n  \"chuvaMinima\": 5.0\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
           "response": []
@@ -629,17 +438,31 @@
           "name": "Atualizar cultura",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/cultura/{{culturaId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["cultura", "{{culturaId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cultura",
+                "{{culturaId}}"
+              ]
             },
             "description": "Atualiza limiares por id.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nome\": \"Soja\",\n  \"diasAteColheita\": 160,\n  \"umidadeSoloCritica\": 30.0,\n  \"temperaturaMinCritica\": 10.0,\n  \"temperaturaMaxCritica\": 40.0,\n  \"chuvaMinima\": 5.0\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
           "response": []
@@ -651,8 +474,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/cultura/{{culturaId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["cultura", "{{culturaId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cultura",
+                "{{culturaId}}"
+              ]
             },
             "description": "Remove. 409 se houver safras usando a cultura."
           },
@@ -671,9 +499,19 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/talhao?produtorId={{produtorId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["talhao"],
-              "query": [{ "key": "produtorId", "value": "{{produtorId}}", "description": "opcional — filtra por produtor" }]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "talhao"
+              ],
+              "query": [
+                {
+                  "key": "produtorId",
+                  "value": "{{produtorId}}",
+                  "description": "opcional — filtra por produtor"
+                }
+              ]
             },
             "description": "Lista talhões; filtro opcional ?produtorId=."
           },
@@ -686,8 +524,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/talhao/{{talhaoId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["talhao", "{{talhaoId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "talhao",
+                "{{talhaoId}}"
+              ]
             },
             "description": "Busca por id."
           },
@@ -697,17 +540,30 @@
           "name": "Criar talhão",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/talhao",
-              "host": ["{{baseUrl}}"],
-              "path": ["talhao"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "talhao"
+              ]
             },
             "description": "Cria talhão com polígono. produtorId obrigatório; ordem dos pontos única (@OrdensDistintas → 400); latitude −90..90, longitude −180..180. O 'centro' alimenta a coleta de previsão.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"produtorId\": 1,\n  \"nome\": \"Talhão Norte\",\n  \"areaHa\": 45.0,\n  \"centro\": {\n    \"latitude\": -19.75,\n    \"longitude\": -47.93\n  },\n  \"pontos\": [\n    { \"ordem\": 0, \"latitude\": -19.749, \"longitude\": -47.931 },\n    { \"ordem\": 1, \"latitude\": -19.751, \"longitude\": -47.929 },\n    { \"ordem\": 2, \"latitude\": -19.752, \"longitude\": -47.933 }\n  ]\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
           "response": []
@@ -716,17 +572,31 @@
           "name": "Atualizar talhão",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/talhao/{{talhaoId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["talhao", "{{talhaoId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "talhao",
+                "{{talhaoId}}"
+              ]
             },
             "description": "Atualiza; substitui o polígono inteiro (orphanRemoval apaga os pontos antigos).",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"produtorId\": 1,\n  \"nome\": \"Talhão Norte\",\n  \"areaHa\": 45.0,\n  \"centro\": {\n    \"latitude\": -19.75,\n    \"longitude\": -47.93\n  },\n  \"pontos\": [\n    { \"ordem\": 0, \"latitude\": -19.749, \"longitude\": -47.931 },\n    { \"ordem\": 1, \"latitude\": -19.751, \"longitude\": -47.929 },\n    { \"ordem\": 2, \"latitude\": -19.752, \"longitude\": -47.933 }\n  ]\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
           "response": []
@@ -738,8 +608,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/talhao/{{talhaoId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["talhao", "{{talhaoId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "talhao",
+                "{{talhaoId}}"
+              ]
             },
             "description": "Remove. 409 se houver safras."
           },
@@ -752,8 +627,14 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/talhao/{{talhaoId}}/situacao",
-              "host": ["{{baseUrl}}"],
-              "path": ["talhao", "{{talhaoId}}", "situacao"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "talhao",
+                "{{talhaoId}}",
+                "situacao"
+              ]
             },
             "description": "Situação atual: cultura da safra ATIVA, última medição, nível de risco e polígono."
           },
@@ -772,9 +653,19 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/safra?talhaoId={{talhaoId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["safra"],
-              "query": [{ "key": "talhaoId", "value": "{{talhaoId}}", "description": "opcional — filtra por talhão" }]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "safra"
+              ],
+              "query": [
+                {
+                  "key": "talhaoId",
+                  "value": "{{talhaoId}}",
+                  "description": "opcional — filtra por talhão"
+                }
+              ]
             },
             "description": "Lista safras; filtro opcional ?talhaoId=."
           },
@@ -787,8 +678,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/safra/{{safraId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["safra", "{{safraId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "safra",
+                "{{safraId}}"
+              ]
             },
             "description": "Busca por id."
           },
@@ -798,17 +694,30 @@
           "name": "Criar safra",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/safra",
-              "host": ["{{baseUrl}}"],
-              "path": ["safra"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "safra"
+              ]
             },
             "description": "Cria safra. talhaoId e culturaId obrigatórios; dataPlantio obrigatória; statusSafra default ATIVA. Rejeita 2ª safra ATIVA no mesmo talhão (409).",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"talhaoId\": 1,\n  \"culturaId\": 1,\n  \"dataPlantio\": \"2026-01-15\",\n  \"dataPrevistaColheita\": \"2026-06-24\",\n  \"statusSafra\": \"ATIVA\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
           "response": []
@@ -817,17 +726,31 @@
           "name": "Atualizar safra",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/safra/{{safraId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["safra", "{{safraId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "safra",
+                "{{safraId}}"
+              ]
             },
             "description": "Atualiza por id. Use statusSafra: COLHIDA ou PERDIDA para encerrar o ciclo.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"talhaoId\": 1,\n  \"culturaId\": 1,\n  \"dataPlantio\": \"2026-01-15\",\n  \"dataPrevistaColheita\": \"2026-06-24\",\n  \"statusSafra\": \"COLHIDA\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
           "response": []
@@ -839,8 +762,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/safra/{{safraId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["safra", "{{safraId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "safra",
+                "{{safraId}}"
+              ]
             },
             "description": "Remove por id."
           },
@@ -859,8 +787,12 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/dispositivo",
-              "host": ["{{baseUrl}}"],
-              "path": ["dispositivo"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "dispositivo"
+              ]
             },
             "description": "Lista os dispositivos cadastrados."
           },
@@ -873,8 +805,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/dispositivo/{{dispositivoId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["dispositivo", "{{dispositivoId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "dispositivo",
+                "{{dispositivoId}}"
+              ]
             },
             "description": "Busca por id."
           },
@@ -884,17 +821,30 @@
           "name": "Cadastrar dispositivo",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/dispositivo",
-              "host": ["{{baseUrl}}"],
-              "path": ["dispositivo"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "dispositivo"
+              ]
             },
             "description": "Cadastra dispositivo. codigoDispositivo único (409); talhaoId obrigatório; regra '1 dispositivo por talhão' (409); ativo default true.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"codigoDispositivo\": \"ESP32-001\",\n  \"talhaoId\": 1,\n  \"ativo\": true\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
           "response": []
@@ -903,17 +853,31 @@
           "name": "Atualizar dispositivo",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/dispositivo/{{dispositivoId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["dispositivo", "{{dispositivoId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "dispositivo",
+                "{{dispositivoId}}"
+              ]
             },
             "description": "Atualiza (inclui ativar/desativar via campo 'ativo'). Leituras de dispositivo inativo são rejeitadas (409).",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"codigoDispositivo\": \"ESP32-001\",\n  \"talhaoId\": 1,\n  \"ativo\": false\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
           "response": []
@@ -925,8 +889,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/dispositivo/{{dispositivoId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["dispositivo", "{{dispositivoId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "dispositivo",
+                "{{dispositivoId}}"
+              ]
             },
             "description": "Remove. Cascata das leituras via service (sem barreira de safra ativa)."
           },
@@ -942,17 +911,30 @@
           "name": "Enviar leitura",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/leitura",
-              "host": ["{{baseUrl}}"],
-              "path": ["leitura"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "leitura"
+              ]
             },
             "description": "Recebe leitura do ESP32. Valida: dispositivo existe (404) e está ativo (409); faixas físicas (400): temperatura −50..60, umidadeAr 0..100, umidadeSolo 0..100, radiacaoSolar 0..1500.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"codigoDispositivo\": \"ESP32-001\",\n  \"dataHora\": \"2026-06-08T09:41:00\",\n  \"temperatura\": 26.0,\n  \"umidadeAr\": 72.0,\n  \"umidadeSolo\": 31.0,\n  \"radiacaoSolar\": 456.0\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
           "response": []
@@ -964,9 +946,19 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/leitura?talhaoId={{talhaoId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["leitura"],
-              "query": [{ "key": "talhaoId", "value": "{{talhaoId}}", "description": "obrigatório" }]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "leitura"
+              ],
+              "query": [
+                {
+                  "key": "talhaoId",
+                  "value": "{{talhaoId}}",
+                  "description": "obrigatório"
+                }
+              ]
             },
             "description": "Lista o histórico de leituras de um talhão (mais recentes primeiro)."
           },
@@ -985,9 +977,19 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/previsao?talhaoId={{talhaoId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["previsao"],
-              "query": [{ "key": "talhaoId", "value": "{{talhaoId}}", "description": "obrigatório" }]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "previsao"
+              ],
+              "query": [
+                {
+                  "key": "talhaoId",
+                  "value": "{{talhaoId}}",
+                  "description": "obrigatório"
+                }
+              ]
             },
             "description": "Lista o histórico de previsões de um talhão."
           },
@@ -1006,9 +1008,19 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/analise?talhaoId={{talhaoId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["analise"],
-              "query": [{ "key": "talhaoId", "value": "{{talhaoId}}", "description": "obrigatório" }]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "analise"
+              ],
+              "query": [
+                {
+                  "key": "talhaoId",
+                  "value": "{{talhaoId}}",
+                  "description": "obrigatório"
+                }
+              ]
             },
             "description": "Lista o histórico de análises de um talhão (mais recentes primeiro)."
           },
@@ -1021,9 +1033,20 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/analise/ultima?talhaoId={{talhaoId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["analise", "ultima"],
-              "query": [{ "key": "talhaoId", "value": "{{talhaoId}}", "description": "obrigatório" }]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "analise",
+                "ultima"
+              ],
+              "query": [
+                {
+                  "key": "talhaoId",
+                  "value": "{{talhaoId}}",
+                  "description": "obrigatório"
+                }
+              ]
             },
             "description": "Última análise de um talhão. 404 se ainda não houver análise."
           },
@@ -1036,8 +1059,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/analise/{{analiseId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["analise", "{{analiseId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "analise",
+                "{{analiseId}}"
+              ]
             },
             "description": "Busca uma análise por id."
           },
