@@ -8,7 +8,7 @@ O serviço recebe leituras de sensores ESP32 e previsões do Open-Meteo, executa
 
 |                               | |
 |-------------------------------|---|
-| Deploy (nuvem)                | *http://158.23.177.47:8080/* |
+| Deploy (Azure)                | *http://158.23.177.47:8080/* |
 | Swagger UI (produção)         | *http://158.23.177.47:8080/swagger-ui/index.html#* |
 | Postman collection            | [`docs/postman/SafraCerta.postman_collection.json`](docs/postman/SafraCerta.postman_collection.json) |
 | Vídeo de apresentação do Java | *(atualizar após a gravação)* |
