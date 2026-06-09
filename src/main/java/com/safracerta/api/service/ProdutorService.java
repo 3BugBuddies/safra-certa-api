@@ -61,14 +61,9 @@ public class ProdutorService {
         return repository.save(p);
     }
 
-    /** Cascata: remove todos os talhões do produtor (e o que pende deles) antes do próprio. */
     @Transactional
     public void deletar(Long id) {
-        Produtor p = buscar(id);
-        for (Talhao t : List.copyOf(p.getTalhoes())) {
-            talhaoService.deletar(t.getId());
-        }
-        repository.delete(p);
+        repository.delete(buscar(id));
     }
 
     // ── Visões de leitura ────────────────────────────────────────────────────

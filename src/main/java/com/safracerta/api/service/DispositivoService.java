@@ -6,7 +6,6 @@ import com.safracerta.api.entity.Talhao;
 import com.safracerta.api.exception.ConflictException;
 import com.safracerta.api.exception.NotFoundException;
 import com.safracerta.api.repository.DispositivoRepository;
-import com.safracerta.api.repository.LeituraSensorRepository;
 import com.safracerta.api.repository.TalhaoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,12 +17,10 @@ public class DispositivoService {
 
     private final DispositivoRepository repository;
     private final TalhaoRepository talhaoRepository;
-    private final LeituraSensorRepository leituraSensorRepository;
 
-    public DispositivoService(DispositivoRepository repository, TalhaoRepository talhaoRepository, LeituraSensorRepository leituraSensorRepository) {
+    public DispositivoService(DispositivoRepository repository, TalhaoRepository talhaoRepository) {
         this.repository = repository;
         this.talhaoRepository = talhaoRepository;
-        this.leituraSensorRepository = leituraSensorRepository;
     }
 
     public List<Dispositivo> listar() {
@@ -62,12 +59,9 @@ public class DispositivoService {
         return repository.save(d);
     }
 
-    /** Remove o dispositivo e suas leituras (sem barreira de safra ativa). */
     @Transactional
     public void deletar(Long id) {
-        Dispositivo d = buscar(id);
-        leituraSensorRepository.deleteByDispositivoId(id);
-        repository.delete(d);
+        repository.delete(buscar(id));
     }
 
     private Talhao resolverTalhao(Long talhaoId) {

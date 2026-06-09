@@ -11,8 +11,6 @@ import com.safracerta.api.entity.Talhao;
 import com.safracerta.api.entity.enums.NivelRisco;
 import com.safracerta.api.entity.enums.StatusSafra;
 import com.safracerta.api.repository.AnaliseTalhaoRepository;
-import com.safracerta.api.repository.DispositivoRepository;
-import com.safracerta.api.repository.LeituraSensorRepository;
 import com.safracerta.api.repository.ProdutorRepository;
 import com.safracerta.api.repository.SafraTalhaoRepository;
 import com.safracerta.api.repository.TalhaoRepository;
@@ -28,21 +26,15 @@ public class TalhaoService {
     private final ProdutorRepository produtorRepository;
     private final SafraTalhaoRepository safraTalhaoRepository;
     private final AnaliseTalhaoRepository analiseTalhaoRepository;
-    private final DispositivoRepository dispositivoRepository;
-    private final LeituraSensorRepository leituraSensorRepository;
 
     public TalhaoService(TalhaoRepository repository,
                          ProdutorRepository produtorRepository,
                          SafraTalhaoRepository safraTalhaoRepository,
-                         AnaliseTalhaoRepository analiseTalhaoRepository,
-                         DispositivoRepository dispositivoRepository,
-                         LeituraSensorRepository leituraSensorRepository) {
+                         AnaliseTalhaoRepository analiseTalhaoRepository) {
         this.repository = repository;
         this.produtorRepository = produtorRepository;
         this.safraTalhaoRepository = safraTalhaoRepository;
         this.analiseTalhaoRepository = analiseTalhaoRepository;
-        this.dispositivoRepository = dispositivoRepository;
-        this.leituraSensorRepository = leituraSensorRepository;
     }
 
     public List<Talhao> listar(Long produtorId) {
@@ -65,24 +57,15 @@ public class TalhaoService {
     public Talhao atualizar(Long id, TalhaoRequest req) {
         Talhao t = buscar(id);
         Produtor produtor = resolverProdutor(req.produtorId());
-        // Remove os pontos antigos e descarrega os DELETEs ANTES dos novos INSERTs;
-        // senão o Hibernate insere os novos antes de apagar os antigos e colide na
-        // unique (talhao_id, ordem) — ORA-00001 UK_TALHAO_PONTO_ORDEM.
         t.getPontos().clear();
         repository.saveAndFlush(t);
         req.applyTo(t, produtor);
         return repository.save(t);
     }
 
-    /** Cascata: apaga análises, leituras, dispositivos e safras do talhão antes do próprio. */
     @Transactional
     public void deletar(Long id) {
-        Talhao t = buscar(id);
-        analiseTalhaoRepository.deleteByTalhaoId(id);
-        leituraSensorRepository.deleteByTalhaoId(id);
-        dispositivoRepository.deleteByTalhaoId(id);
-        safraTalhaoRepository.deleteByTalhaoId(id);
-        repository.delete(t);  // pontos caem por orphanRemoval
+        repository.delete(buscar(id));
     }
 
     // ── Visões de leitura (situação do talhão) ───────────────────────────────

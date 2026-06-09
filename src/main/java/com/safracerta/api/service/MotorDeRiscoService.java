@@ -109,8 +109,7 @@ public class MotorDeRiscoService {
         List<String> fatores = new ArrayList<>();
 
         // Solo seco (leitura do sensor)
-        if (cultura.getUmidadeSoloCritica() != null && leitura.getUmidadeSolo() != null
-                && leitura.getUmidadeSolo() < cultura.getUmidadeSoloCritica()) {
+        if (cultura.getUmidadeSoloCritica() != null && leitura.getUmidadeSolo() != null && leitura.getUmidadeSolo() < cultura.getUmidadeSoloCritica()) {
             fatores.add("umidade do solo abaixo do crítico (%s < %s)"
                     .formatted(leitura.getUmidadeSolo(), cultura.getUmidadeSoloCritica()));
         }

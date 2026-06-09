@@ -57,14 +57,9 @@ public class CooperativaService {
         return repository.save(c);
     }
 
-    /** Cascata: remove todos os produtores da cooperativa (e tudo abaixo) antes da própria. */
     @Transactional
     public void deletar(Long id) {
-        Cooperativa c = buscar(id);
-        for (Produtor p : List.copyOf(c.getProdutores())) {
-            produtorService.deletar(p.getId());
-        }
-        repository.delete(c);
+        repository.delete(buscar(id));
     }
 
     // ── Visões de leitura (telas da cooperativa) ─────────────────────────────

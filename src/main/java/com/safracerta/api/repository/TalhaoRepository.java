@@ -7,5 +7,4 @@ import java.util.List;
 
 public interface TalhaoRepository extends JpaRepository<Talhao, Long> {
     List<Talhao> findByProdutorId(Long produtorId);
-    boolean existsByProdutorId(Long produtorId);
 }
